@@ -1,0 +1,6 @@
+<app-title title="Todas as informações de qualquer pessoa em segundos!"
+           subtitle="Obtenha até 15 informações a partir do CPF." />
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+  <app-item *ngFor="let item of items" [nome]="item.name" [cor]="item.cor"></app-item>
+</div>
+<p class="text-center text-sm text-gray-600 p-5">Informações marcadas com * são adquiridas separadamente após a aquisição do Relatório Completo</p>
