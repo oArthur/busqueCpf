@@ -1,0 +1,11 @@
+<div class="h-full flex flex-col items-center w-full">
+  <app-form-resultado
+    [titulo]="'Relatório Parcial'"
+    [dados]="dadosParciais"
+    [mostrarBotao]="true"
+    [textoBotao]="'🔒 Liberar Relatório Completo'" />
+
+  <app-como-comprar />
+  <app-form-compra [cpf]="cpf!" id="compra"/>
+  <app-transparencia />
+</div>

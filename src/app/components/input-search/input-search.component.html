@@ -1,11 +1,16 @@
-<form class="w-full max-w-xl rounded-xl p-6 shadow-md flex flex-col items-center gap-6 bg-card" (ngSubmit)="onSubmit($event)">
+<form class="w-full max-w-xl rounded-xl p-6 shadow-md flex flex-col items-center gap-6 bg-card"
+      (ngSubmit)="onSubmit($event)">
   <div class="w-full text-center text-lg font-bold text-gray-950">{{ title }}</div>
 
-  <input id="text" type="text" [formControl]="buscaPrincipal" class="rounded-xl bg-white p-4 border-0
-  w-5/6 sm:w-4/6 text-center shadow-sm text-lg" placeholder="Apenas números">
+  <input id="cpf" type="text" [formControl]="buscaPrincipal"
+         (input)="formatCpf(buscaPrincipal.value || '')"
+         class="rounded-xl bg-white p-4 border-0 w-5/6 sm:w-4/6 text-center shadow-sm text-lg"
+         [ngClass]="{'border-red-500 border-2': cpfInvalido}"
+         placeholder="Digite seu CPF">
 
-  <input type="submit" value="Buscar" class="flex items-center justify-center gap-2 px-6 py-3
-  bg-primary font-semibold rounded-xl shadow-md text-white
-  hover:bg-primaryContrast focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-  transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 w-5/6 sm:w-4/6"/>
+  <p *ngIf="cpfInvalido" class="text-red-500 text-sm">CPF inválido</p>
+
+  <input type="submit" value="Buscar"
+         class="flex items-center justify-center gap-2 px-6 py-3 bg-primary font-semibold rounded-xl shadow-md text-white hover:bg-primaryContrast focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 w-5/6 sm:w-4/6"
+         [disabled]="cpfInvalido"/>
 </form>
