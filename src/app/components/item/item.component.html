@@ -1,6 +1,11 @@
 <div
   [ngStyle]="{'background-color': cor}"
-  class="p-4 rounded-lg cursor-pointer py-3 px-5 w-full text-center text-white font-bold text-sm transition-transform duration-300 transform hover:scale-110">
+  class="p-4 rounded-lg cursor-pointer py-3 px-5 w-full text-center text-white font-bold text-sm transition-transform duration-300 transform hover:scale-110"
+  (click)="abrirModal()">
   {{ nome }}
-<!--  TODO on click preciso mostrar um modal com o componente input-search-->
 </div>
+
+<!-- Modal -->
+<app-modal [isOpen]="isModalOpen" (close)="fecharModal()">
+  <app-input-search [title]="'Buscar CPF'" />
+</app-modal>

@@ -1,0 +1,16 @@
+<div class="h-full flex flex-col items-center w-full">
+  <!-- Mostra o loading enquanto os dados estão carregando -->
+  <div *ngIf="carregando" class="flex justify-center items-center h-32">
+    <div class="loader"></div>
+  </div>
+
+  <!-- Mostra os dados apenas quando carregando = false -->
+  <app-form-resultado
+    *ngIf="!carregando"
+    [titulo]="'Relatório Completo'"
+    [dados]="dadosParciais"
+    [mostrarBotao]="false"
+  />
+
+  <app-transparencia *ngIf="!carregando"/>
+</div>

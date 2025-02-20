@@ -5,6 +5,7 @@ import {ComoComprarComponent} from '../como-comprar/como-comprar.component';
 import {TransparenciaComponent} from '../../components/transparencia/transparencia.component';
 import {FormContatoComponent} from '../../components/form-contato/form-contato.component';
 import {FormCompraComponent} from '../form-compra/form-compra.component';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-resultado-parcial',
@@ -15,7 +16,8 @@ import {FormCompraComponent} from '../form-compra/form-compra.component';
     ComoComprarComponent,
     TransparenciaComponent,
     FormContatoComponent,
-    FormCompraComponent
+    FormCompraComponent,
+    NgIf
   ],
   styleUrl: './resultado-parcial.component.scss'
 })
@@ -23,6 +25,7 @@ export class ResultadoParcialComponent {
 
   cpf: string | null = null;
   dadosParciais: { label: string; valor: string }[] = [];
+  carregando: boolean = false;
 
   // Labels fixas que sempre aparecem na tela
   labelsFixas: { label: string, chave: string }[] = [
@@ -43,6 +46,7 @@ export class ResultadoParcialComponent {
   ];
 
   constructor(private router: Router) {
+    this.carregando = true;
     const navigation = this.router.getCurrentNavigation();
 
     if (navigation?.extras.state) {
@@ -57,6 +61,7 @@ export class ResultadoParcialComponent {
         label: item.label,
         valor: this.formatarValor(item.chave, dadosObj[item.chave]) // Formata os valores corretamente
       }));
+      this.carregando = false;
     } else {
       this.router.navigate(['/']);
     }

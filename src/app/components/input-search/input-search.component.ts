@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import {CpfService} from '../../services/cpf.service';
 import {FormatCpfService} from '../../services/format-cpf.service';
@@ -52,7 +51,6 @@ export class InputSearchComponent {
     this.cpfApiService.buscarCpf(cpf, false).subscribe({
       next: (response) => {
         this.carregando = false;
-
         if (response) {
           this.router.navigate(["/resultado"], {
             state: { dados: response, cpf: cpf }

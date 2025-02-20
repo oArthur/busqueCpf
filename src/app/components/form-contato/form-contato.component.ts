@@ -53,12 +53,14 @@ export class FormContatoComponent {
         if (response && response.id) {
           const pedidoId = response.id;
 
+          console.log(`Resposta da API no form-contato: ${response}`)
+
           // Passando os dados via Router State
           this.router.navigate(['/pagamento'], {
-            state: {
-              pagamento: response // Passa todos os dados do pagamento
-            }
+            queryParams: { cpf: this.cpfBusca, id: response.id },
+            state: { pagamento: response }
           });
+
         } else {
           alert("Erro ao gerar pedido. Tente novamente.");
         }

@@ -1,11 +1,20 @@
 <div class="h-full flex flex-col items-center w-full">
-  <app-form-resultado
-    [titulo]="'Relatório Parcial'"
-    [dados]="dadosParciais"
-    [mostrarBotao]="true"
-    [textoBotao]="'🔒 Liberar Relatório Completo'" />
+  <!-- Mostra o loading enquanto os dados estão carregando -->
+  <div *ngIf="carregando" class="flex justify-center items-center h-32">
+    <div class="loader"></div>
+  </div>
 
-  <app-como-comprar />
-  <app-form-compra [cpf]="cpf!" id="compra"/>
-  <app-transparencia />
+  <!-- Mostra os dados apenas quando carregando = false -->
+  <ng-container *ngIf="!carregando">
+    <app-form-resultado
+      [titulo]="'Relatório Parcial'"
+      [dados]="dadosParciais"
+      [mostrarBotao]="true"
+      [textoBotao]="'🔒 Liberar Relatório Completo'"
+    />
+
+    <app-como-comprar />
+    <app-form-compra [cpf]="cpf!" id="compra"/>
+    <app-transparencia />
+  </ng-container>
 </div>
