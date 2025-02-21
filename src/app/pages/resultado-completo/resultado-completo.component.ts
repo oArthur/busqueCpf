@@ -26,27 +26,27 @@ export class ResultadoCompletoComponent implements OnInit {
   cpf!: string;
   id!: string;
   carregando: boolean = false;
-  dadosParciais: { label: string; valor: string }[] = [];
+  dadosParciais: { name: string, label: string, valor: string, show: boolean }[] = [];
 
   constructor(private router: Router, private cpfApiService: CpfService, private route: ActivatedRoute, private bdPedidosService: BdPedidosService) {}
 
   // Labels fixas que sempre aparecem na tela
-  labelsFixas: { label: string, chave: string }[] = [
-    { label: "Nome Completo", chave: "nome" },
-    { label: "Gênero", chave: "sexo" },
-    { label: "Data de Nascimento", chave: "data_nascimento" },
-    { label: "Nome da Mãe", chave: "nome_mae" },
-    { label: "Situação do CPF", chave: "situacao_cpf" },
-    { label: "Provável Óbito", chave: "obito" },
-    { label: "Ocupação Profissional", chave: "ocupacao" },
-    { label: "Renda", chave: "renda" },
-    { label: "Vínculos", chave: "vinculos" },
-    { label: "Participação Societária", chave: "participacao_societaria" },
-    { label: "Histórico Profissional", chave: "historico_profissional" },
-    { label: "WhatsApp", chave: "telefones" },
-    { label: "Telefone", chave: "telefones" },
-    { label: "E-Mail", chave: "emails" },
-    { label: "Endereço", chave: "enderecos" }
+  labelsFixas: { name: string, label: string, chave: string, show: boolean }[] = [
+    { name: "nome", label: "Nome Completo", chave: "nome", show: true},
+    { name: "genero", label: "Gênero", chave: "sexo", show: true },
+    { name: "dta_nascimento", label: "Data de Nascimento", chave: "data_nascimento", show: true },
+    { name: "nome_mae", label: "Nome da Mãe", chave: "nome_mae", show: true },
+    { name: "cpf", label: "CPF", chave: "cpf", show: true },
+    { name: "situcao_cpf", label: "Situação do CPF", chave: "situacao_cpf", show: true },
+    { name: "obito", label: "Provável Óbito", chave: "obito", show: true },
+    { name: "ocupacao", label: "Ocupação Profissional", chave: "ocupacao", show: true },
+    { name: "renda", label: "Renda", chave: "renda", show: true },
+    { name: "vinculos", label: "Vínculos", chave: "vinculos", show: false },
+    { name: "participacao_societaria", label: "Participação Societária", chave: "participacao_societaria", show: false },
+    { name: "historico_profissional", label: "Histórico Profissional", chave: "historico_profissional", show: false },
+    { name: "telefone", label: "Telefone", chave: "telefones", show: false },
+    { name: "email", label: "E-Mail", chave: "emails", show: false },
+    { name: "enderecos", label: "Endereço", chave: "enderecos", show: false }
   ];
 
   ngOnInit() {
@@ -75,63 +75,13 @@ export class ResultadoCompletoComponent implements OnInit {
     }
   }
 
-  /**
-   * Monta os dados para exibição formatada
-   */
   montarDados(dados: any) {
     this.dadosParciais = this.labelsFixas.map(item => ({
       label: item.label,
-      valor: this.formatarValor(item.chave, dados[item.chave])
+      valor: dados[item.chave],
+      name: item.name,
+      show: item.show
     }));
-  }
-
-  /**
-   * Formata os valores para garantir legibilidade, tratando listas corretamente.
-   */
-  formatarValor(chave: string, valor: any): string {
-    if (valor === null || valor === undefined || valor === "") return "Não informado";
-
-    if (chave === "data_nascimento") {
-      return this.formatarData(valor);
-    }
-    if (chave === "obito") {
-      return valor ? "Sim" : "Não";
-    }
-    if (chave === "renda") {
-      return valor ? `R$ ${valor.toFixed(2)}` : "Não informado";
-    }
-    if (chave === "telefones") {
-      return valor.length > 0
-        ? valor.map((t: any) => `${t.ddd} ${t.numero} ${t.whatsapp ? "(WhatsApp)" : ""}`).join(" | ")
-        : "Não informado";
-    }
-    if (chave === "emails") {
-      return valor.length > 0 ? valor.join(", ") : "Não informado";
-    }
-    if (chave === "enderecos") {
-      return valor.length > 0
-        ? valor.map((e: any) => `${e.logradouro}, ${e.numero} - ${e.bairro}, ${e.cidade}/${e.uf}, CEP: ${e.cep}`).join(" | ")
-        : "Não informado";
-    }
-    if (chave === "participacao_societaria") {
-      return valor.length > 0
-        ? valor.map((p: any) => `Entrada: ${p.dataEntrada} | Empresa: ${p.razaoSocial} (${p.cnpj}) | Cargo: ${p.cargo}`).join("\n")
-        : "Não possui";
-    }
-    if (chave === "vinculos" || chave === "historico_profissional") {
-      return valor.length > 0 ? valor.map((v: any) => JSON.stringify(v)).join(" | ") : "Nenhum";
-    }
-
-    return valor.toString(); // Retorna como string se não for uma lista
-  }
-
-
-  formatarData(data: string): string {
-    const partes = data.split("-");
-    if (partes.length === 3) {
-      return `${partes[2]}/${partes[1]}/${partes[0]}`;
-    }
-    return "N/A";
   }
 
   buscaCpfApi() {

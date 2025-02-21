@@ -1,0 +1,15 @@
+/* Spinner (Loading) */
+.spinner {
+  border: 5px solid rgba(5, 7, 46, 0.53);
+  border-top: 5px solid #0e137e;
+  border-radius: 50%;
+  width: 65px;
+  height: 65px;
+  animation: spin 1s linear infinite;
+}
+
+/* Animação do spinner */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

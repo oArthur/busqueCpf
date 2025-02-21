@@ -1,9 +1,17 @@
 import { Component, Input } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidationErrors
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import {CpfService} from '../../services/cpf.service';
-import {FormatCpfService} from '../../services/format-cpf.service';
+import { CpfService } from '../../services/cpf.service';
+import { FormatCpfService } from '../../services/format-cpf.service';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-input-search',
@@ -11,7 +19,8 @@ import {FormatCpfService} from '../../services/format-cpf.service';
   imports: [
     ReactiveFormsModule,
     FormsModule,
-    CommonModule
+    CommonModule,
+    NgxMaskDirective
   ],
   templateUrl: './input-search.component.html',
   styleUrl: './input-search.component.scss'
@@ -19,31 +28,55 @@ import {FormatCpfService} from '../../services/format-cpf.service';
 export class InputSearchComponent {
   @Input() title: string = '';
 
-  buscaPrincipal = new FormControl('', [Validators.required]);
+  // Cria o FormControl com Validators.required e o validador customizado
+  buscaPrincipal: FormControl;
   cpfInvalido: boolean = false;
   cpfCompleto: boolean = false;
   carregando: boolean = false;
 
-  constructor(private cpfApiService: CpfService, private router: Router, private cpfService: FormatCpfService) {}
+  constructor(
+    private cpfApiService: CpfService,
+    private router: Router,
+    private cpfService: FormatCpfService
+  ) {
+    // Inicializa o FormControl com o validador customizado (usando bind para acessar o serviço)
+    this.buscaPrincipal = new FormControl('', [
+      Validators.required,
+      this.cpfValidator.bind(this)
+    ]);
 
-  /**
-   * Aplica a máscara de CPF e valida
-   */
-  formatCpf(value: string = '') {
-    const formattedValue = this.cpfService.formatCpf(value);
-    this.buscaPrincipal.setValue(formattedValue, { emitEvent: false });
-
-    const cpfNumerico = value.replace(/\D/g, '');
-    this.cpfCompleto = cpfNumerico.length === 11;
-    this.cpfInvalido = this.cpfCompleto && !this.cpfService.validarCpf(cpfNumerico);
+    // Inscreve para atualizar flags conforme o valor muda
+    this.buscaPrincipal.valueChanges.subscribe(value => {
+      const cpfNumerico = (value || '').replace(/\D/g, '');
+      this.cpfCompleto = cpfNumerico.length === 11;
+      this.cpfInvalido = this.buscaPrincipal.invalid;
+    });
   }
 
   /**
-   * Submete o CPF para busca
+   * Validador customizado para CPF.
+   * Remove caracteres não numéricos e, se houver 11 dígitos, usa o serviço para validar.
+   */
+  cpfValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value || '';
+    const cpfNumerico = value.replace(/\D/g, '');
+    // Se vazio, a validação de required cuidará disso
+    if (!value) return null;
+    if (cpfNumerico.length !== 11) {
+      return { cpfInvalid: true };
+    }
+    if (!this.cpfService.validarCpf(cpfNumerico)) {
+      return { cpfInvalid: true };
+    }
+    return null;
+  }
+
+  /**
+   * Submete o CPF para busca, somente se o FormControl for válido.
    */
   onSubmit(event: Event) {
     event.preventDefault();
-    if (this.cpfInvalido) return;
+    if (this.buscaPrincipal.invalid) return;
 
     this.carregando = true;
     const cpf = (this.buscaPrincipal.value ?? '').toString().replace(/\D/g, '');
@@ -52,16 +85,16 @@ export class InputSearchComponent {
       next: (response) => {
         this.carregando = false;
         if (response) {
-          this.router.navigate(["/resultado"], {
+          this.router.navigate(['/resultado'], {
             state: { dados: response, cpf: cpf }
           });
         } else {
-          alert("CPF não encontrado ou bloqueado.");
+          alert('CPF não encontrado ou bloqueado.');
         }
       },
       error: () => {
         this.carregando = false;
-        alert("Erro ao buscar CPF. Tente novamente mais tarde.");
+        alert('Erro ao buscar CPF. Tente novamente mais tarde.');
       }
     });
   }

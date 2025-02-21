@@ -22,6 +22,7 @@ export class PagamentoComponent implements OnInit, OnDestroy {
   status = "Pendente";
   carregando = true;
   intervaloVerificacao: any;
+  isLoading = true
   cpf!: string;
   id!: string;
   tentativas:number = 0;
@@ -77,6 +78,7 @@ export class PagamentoComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.status = "Erro ao verificar pagamento.";
+        this.isLoading = false
       }
     });
   }
@@ -88,6 +90,7 @@ export class PagamentoComponent implements OnInit, OnDestroy {
         this.carregando = false;
 
         if (response) {
+          this.isLoading = false
           this.router.navigate([`/resultado/${this.id}`], {
             queryParams: {cpf: this.cpf},
             state: { dados: response, cpf: this.cpf }

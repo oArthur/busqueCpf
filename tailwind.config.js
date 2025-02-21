@@ -10,8 +10,8 @@ module.exports = {
         card: '#e7e7e7',
         primaryContrast: '#0e137e'},
       fontFamily: {
-        'manrope': ['"Manrope"', 'sans-serif'],
-      }
+        sans: ['Poppins', 'sans-serif'],
+      },
     },
   },
   plugins: [],

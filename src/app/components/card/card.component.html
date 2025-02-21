@@ -1,8 +1,15 @@
 <div class="cursor-pointer rounded-xl p-4 bg-card md:transition md:duration-500 md:ease-in-out md:transform
- md:hover:translate-y-1 md:hover:scale-105 md:hover:shadow-xl shadow-md md:w-80 md:min-h-64 w-40 h-auto mt-auto mb-auto">
+ md:hover:translate-y-1 md:hover:scale-105 md:hover:shadow-xl shadow-md md:w-80 md:min-h-64 w-40 h-auto mt-auto mb-auto"
+     (click)="abrirModal()">
 <div class="mb-auto ">
     <img class="w-auto md:h-28 h-20 mr-auto ml-auto mt-4" src="/assets/images/{{photo}}.png"  alt="imagem {{photo}}"/>
     <div class="w-full md:text-md text-md text-center font-semibold text-black pt-2 titleFontBold">{{name}}</div>
     <p class="text-gray-600 text-xs md:text-sm text-center mt-2 break-words">{{description}}</p>
   </div>
 </div>
+
+
+<!-- Modal -->
+<app-modal [isOpen]="isModalOpen" (close)="fecharModal()">
+  <app-input-search [title]="'Buscar CPF'" />
+</app-modal>

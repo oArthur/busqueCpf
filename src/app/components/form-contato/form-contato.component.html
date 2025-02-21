@@ -1,4 +1,4 @@
-<form (ngSubmit)="onSubmit()" [formGroup]="contato" class="max-w-lg mx-auto bg-gray-100 p-6 rounded-2xl shadow-md space-y-4">
+<form (ngSubmit)="onSubmit()" [formGroup]="contato" class="max-w-lg mx-auto bg-gray-100 p-6 rounded-2xl shadow-md space-y-4" id="compra">
   <h2 class="text-xl text-gray-600 text-center">Insira seus dados para efetuar o pagamento via Pix e liberar o relatório do veículo de forma rápida e segura.</h2>
 
   <!-- Nome -->
@@ -18,6 +18,7 @@
     <label class="block text-gray-700">CPF *</label>
     <input type="text" formControlName="cpf"
            (input)="formatCpf()"
+           mask="000.000.000-00"
            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
            [ngClass]="{'border-red-500 border-2': campoInvalido('cpf')}"
            placeholder="Somente números">
