@@ -7,10 +7,10 @@ import {ResultadoCompletoComponent} from './pages/resultado-completo/resultado-c
 import {RemoverBaseComponent} from './pages/remover-base/remover-base.component';
 
 export const routes: Routes = [
-  {path: '', title: 'Home - Consulte CPF', component: HomeComponent},
-  {path: 'politicas-de-privacidade', title: "Politicas - Consulte CPF", component: PoliticasPrivacidadeComponent},
-  {path: 'resultado', title: "Resultado Parcial - Consulte CPF", component: ResultadoParcialComponent},
-  {path: 'resultado/:id', title: "Resultado Completo - Consulte CPF", component: ResultadoCompletoComponent},
-  {path: 'pagamento', title: "Pagamento - Consulte CPF", component: PagamentoComponent},
-  {path: 'descadastrar', title: "Descadastrar CPF - Consulte CPF", component: RemoverBaseComponent}
+  {path: '', title: 'Home - Busque CPF', component: HomeComponent},
+  {path: 'politicas-de-privacidade', title: "Politicas - Busque CPF", component: PoliticasPrivacidadeComponent},
+  {path: 'resultado', title: "Resultado Parcial - Busque CPF", component: ResultadoParcialComponent},
+  {path: 'resultado-completo/:id', title: "Resultado Completo - Busque CPF", component: ResultadoCompletoComponent},
+  {path: 'pagamento', title: "Pagamento - Busque CPF", component: PagamentoComponent},
+  {path: 'descadastrar', title: "Descadastrar CPF - Busque CPF", component: RemoverBaseComponent}
 ];

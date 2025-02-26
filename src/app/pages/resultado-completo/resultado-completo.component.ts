@@ -5,7 +5,6 @@ import { FormResultadoComponent } from "../../components/form-resultado/form-res
 import { TransparenciaComponent } from "../../components/transparencia/transparencia.component";
 import { ActivatedRoute, Router } from '@angular/router';
 import { CpfService } from '../../services/cpf.service';
-import {PagarMeService} from '../../services/pagar-me.service';
 import {BdPedidosService} from '../../services/bd-pedidos.service';
 import {NgIf} from '@angular/common';
 

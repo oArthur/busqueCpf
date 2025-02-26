@@ -1,11 +1,12 @@
 // form-resultado.component.ts
 import { Component, Input, OnInit } from '@angular/core';
-import {CurrencyPipe, NgForOf, NgIf} from '@angular/common';
+import {CurrencyPipe, DatePipe, NgForOf, NgIf} from '@angular/common';
+import {CpfFormatPipe} from '../../pipes/cpf-format.pipe';
 
 @Component({
   selector: 'app-form-resultado',
   standalone: true,
-  imports: [NgForOf, NgIf, CurrencyPipe],
+  imports: [NgForOf, NgIf, CurrencyPipe, CpfFormatPipe, DatePipe],
   templateUrl: './form-resultado.component.html',
   styleUrl: './form-resultado.component.scss'
 })
@@ -24,6 +25,11 @@ export class FormResultadoComponent implements OnInit {
 
   ngOnInit() {
     console.log(this.dados);
+
+    this.dados = this.dados.map(item => ({
+      ...item,
+      valor: (typeof item.valor === 'object' && Object.keys(item.valor).length === 0) ? null : item.valor
+    }));
 
     // Telefones
     const telefoneItem = this.dados.find(item => item.name === 'telefone');

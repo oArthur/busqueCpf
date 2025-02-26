@@ -91,7 +91,7 @@ export class PagamentoComponent implements OnInit, OnDestroy {
 
         if (response) {
           this.isLoading = false
-          this.router.navigate([`/resultado/${this.id}`], {
+          this.router.navigate([`/resultado-completo/${this.id}`], {
             queryParams: {cpf: this.cpf},
             state: { dados: response, cpf: this.cpf }
           });
