@@ -2,11 +2,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import {CurrencyPipe, DatePipe, NgForOf, NgIf} from '@angular/common';
 import {CpfFormatPipe} from '../../pipes/cpf-format.pipe';
+import {DateFormatPipe} from '../../pipes/date-format.pipe';
 
 @Component({
   selector: 'app-form-resultado',
   standalone: true,
-  imports: [NgForOf, NgIf, CurrencyPipe, CpfFormatPipe, DatePipe],
+  imports: [NgForOf, NgIf, CurrencyPipe, CpfFormatPipe, DatePipe, DateFormatPipe],
   templateUrl: './form-resultado.component.html',
   styleUrl: './form-resultado.component.scss'
 })

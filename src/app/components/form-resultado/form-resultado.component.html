@@ -13,7 +13,7 @@
         {{ item.valor === false ? 'Não' :
           (item.valor && item.valor !== '{}' ?
             (item.name === 'cpf' ? (item.valor | cpfFormat) :
-              item.name === 'dta_nascimento' ? (item.valor | date:'dd/MM/yyyy') :
+              item.name === 'dta_nascimento' ? (item.valor | dateFormat) :
                 item.valor) : 'Não informado') }}
       </span>
       </div>
