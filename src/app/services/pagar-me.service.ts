@@ -8,7 +8,7 @@ import {CupomResponse} from '../interfaces';
   providedIn: 'root'
 })
 export class PagarMeService {
-  private baseUrl = 'https://jarvis-app.referencia.company/webhook-test/generatePayment'
+  private baseUrl = 'https://jarvis-app.referencia.company/webhook/generatePayment'
 
   constructor(private http: HttpClient) {}
 

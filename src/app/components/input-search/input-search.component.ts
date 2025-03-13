@@ -23,7 +23,7 @@ import { NgxMaskDirective } from 'ngx-mask';
     NgxMaskDirective
   ],
   templateUrl: './input-search.component.html',
-  styleUrl: './input-search.component.scss'
+  styleUrls: ['./input-search.component.scss']
 })
 export class InputSearchComponent {
   @Input() title: string = '';
@@ -39,7 +39,7 @@ export class InputSearchComponent {
     private router: Router,
     private cpfService: FormatCpfService
   ) {
-    // Inicializa o FormControl com o validador customizado (usando bind para acessar o serviço)
+    // Inicializa o FormControl com o validador customizado
     this.buscaPrincipal = new FormControl('', [
       Validators.required,
       this.cpfValidator.bind(this)
@@ -55,12 +55,10 @@ export class InputSearchComponent {
 
   /**
    * Validador customizado para CPF.
-   * Remove caracteres não numéricos e, se houver 11 dígitos, usa o serviço para validar.
    */
   cpfValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value || '';
     const cpfNumerico = value.replace(/\D/g, '');
-    // Se vazio, a validação de required cuidará disso
     if (!value) return null;
     if (cpfNumerico.length !== 11) {
       return { cpfInvalid: true };
@@ -79,11 +77,16 @@ export class InputSearchComponent {
     if (this.buscaPrincipal.invalid) return;
 
     this.carregando = true;
+    // Desabilita o controle ao iniciar a requisição
+    this.buscaPrincipal.disable();
+
     const cpf = (this.buscaPrincipal.value ?? '').toString().replace(/\D/g, '');
 
     this.cpfApiService.buscarCpf(cpf, false).subscribe({
       next: (response) => {
         this.carregando = false;
+        // Reabilita o controle após a resposta
+        this.buscaPrincipal.enable();
         if (response) {
           this.router.navigate(['/resultado'], {
             state: { dados: response, cpf: cpf }
@@ -94,6 +97,7 @@ export class InputSearchComponent {
       },
       error: () => {
         this.carregando = false;
+        this.buscaPrincipal.enable();
         alert('Erro ao buscar CPF. Tente novamente mais tarde.');
       }
     });
