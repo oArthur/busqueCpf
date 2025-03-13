@@ -11,9 +11,12 @@
     R$ 22,90
   </p>
   <!-- Preço novo em destaque -->
-  <h2 class="font-black text-primaryContrast text-2xl sm:text-3xl md:text-4xl mb-5">
-    R$ 13,90
+  <h2 class="font-black text-primaryContrast text-2xl sm:text-3xl md:text-4xl mb-2">
+   {{preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
   </h2>
+  <p *ngIf="discountValue !== null" class="text-green-600 text-sm mb-3">
+    Desconto de R$ {{ discountValue | number:'1.2-2' }} aplicado!
+  </p>
 </div>
 
 <app-form-contato [cpfBusca]="cpf"/>

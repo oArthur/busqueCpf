@@ -1,28 +1,24 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {catchError, map, Observable, of} from 'rxjs';
-
-interface Iuser {
-  nome: string,
-  email: string,
-  document: string,
-  telefone: string
-}
+import {CupomResponse} from '../interfaces';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class PagarMeService {
-  private baseUrl = 'https://jarvis-app.referencia.company/webhook/generatePayment'
+  private baseUrl = 'https://jarvis-app.referencia.company/webhook-test/generatePayment'
 
   constructor(private http: HttpClient) {}
 
-  createOrder(user: { document: string; nome: string; email: string }, cpf: string | null): Observable<any>{
+  createOrder(user: { document: string; nome: string; email: string }, cpf: string | null, cupom?: CupomResponse): Observable<any>{
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     });
+
+    console.log(`Cupom: ${cupom}` )
 
     const body = {
 
@@ -54,7 +50,9 @@ export class PagarMeService {
           }
         }
       ],
-      closed: true
+      closed: true,
+      ...(cupom && { cupom: cupom.cupom })
+
     }
     return this.http.post(this.baseUrl, body, { headers });
   }

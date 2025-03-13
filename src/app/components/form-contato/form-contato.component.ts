@@ -5,6 +5,9 @@ import { FormatCpfService } from '../../services/format-cpf.service';
 import { PagarMeService } from '../../services/pagar-me.service';
 import { Router } from '@angular/router';
 import {NgxMaskDirective} from 'ngx-mask';
+import {CupomService} from '../../services/cupom.service';
+import {CupomResponse} from '../../interfaces';
+import {PrecoService} from '../../services/preco.service';
 
 @Component({
   selector: 'app-form-contato',
@@ -24,16 +27,23 @@ export class FormContatoComponent {
   constructor(
     private apiPagarme: PagarMeService,
     private router: Router,
-    private cpfService: FormatCpfService
+    private cpfService: FormatCpfService,
+    private cupomService: CupomService,
+    private precoService: PrecoService
   ) {}
 
   contato = new FormGroup({
     nome: new FormControl<string | null>('', [Validators.required, Validators.minLength(3)]),
     cpf: new FormControl<string | null>('', [Validators.required, Validators.pattern(/^\d{11}$/)]),
-    email: new FormControl<string | null>('', [Validators.required, Validators.email])
+    email: new FormControl<string | null>('', [Validators.required, Validators.email]),
+    cupom: new FormControl<string | null>('',)
   });
 
   carregando = false;
+  cupomAplicado: boolean = false;
+  cupomExistente: boolean = false;
+  labelCupom!: string;
+  cupom!: CupomResponse;
   @Input() cpfBusca!: string;
 
   onSubmit() {
@@ -50,7 +60,7 @@ export class FormContatoComponent {
       document: this.contato.value.cpf!
     };
 
-    this.apiPagarme.createOrder(user, this.cpfBusca).subscribe({
+    this.apiPagarme.createOrder(user, this.cpfBusca, this.cupom).subscribe({
       next: (response) => {
         this.carregando = false;
         if (response && response.id) {
@@ -91,5 +101,25 @@ export class FormContatoComponent {
       );
     }
   }
+
+  aplicarCupom() {
+    const cupomControl = this.contato.get('cupom');
+    if (cupomControl && cupomControl.value) {
+      const cupomValue: string = cupomControl.value as string;
+      this.cupomService.searchCupom(cupomValue).subscribe({
+        next: (res) => {
+          this.labelCupom = res.cupom.description;
+          this.precoService.aplicarDesconto(res.cupom.discount)
+          this.cupomAplicado = true;
+          this.cupomExistente = res.cupom.exists
+          this.cupom = res;
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+    }
+  }
+
 
 }

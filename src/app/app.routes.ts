@@ -7,10 +7,10 @@ import {ResultadoCompletoComponent} from './pages/resultado-completo/resultado-c
 import {RemoverBaseComponent} from './pages/remover-base/remover-base.component';
 
 export const routes: Routes = [
-  {path: '', title: 'Home - Busque CPF', component: HomeComponent},
-  {path: 'politicas-de-privacidade', title: "Politicas - Busque CPF", component: PoliticasPrivacidadeComponent},
-  {path: 'resultado', title: "Resultado Parcial - Busque CPF", component: ResultadoParcialComponent},
-  {path: 'resultado-completo/:id', title: "Resultado Completo - Busque CPF", component: ResultadoCompletoComponent},
-  {path: 'pagamento', title: "Pagamento - Busque CPF", component: PagamentoComponent},
-  {path: 'descadastrar', title: "Descadastrar CPF - Busque CPF", component: RemoverBaseComponent}
+  {path: '', title: 'Home - Busque CPF', loadComponent: () => import("../app/pages/home/home.component").then(c=>c.HomeComponent)},
+  {path: 'politicas-de-privacidade', title: "Politicas - Busque CPF", loadComponent: () => import("../app/pages/politicas-privacidade/politicas-privacidade.component").then(c=>c.PoliticasPrivacidadeComponent)},
+  {path: 'resultado', title: "Resultado Parcial - Busque CPF", loadComponent: () => import("../app/pages/resultado-parcial/resultado-parcial.component").then(c=>c.ResultadoParcialComponent)},
+  {path: 'resultado-completo/:id', title: "Resultado Completo - Busque CPF", loadComponent: () => import("../app/pages/resultado-completo/resultado-completo.component").then(c=>c.ResultadoCompletoComponent)},
+  {path: 'pagamento', title: "Pagamento - Busque CPF", loadComponent: () => import("../app/pages/pagamento/pagamento.component").then(c=>c.PagamentoComponent)},
+  {path: 'descadastrar', title: "Descadastrar CPF - Busque CPF", loadComponent: () => import("../app/pages/remover-base/remover-base.component").then(c=>c.RemoverBaseComponent)},
 ];

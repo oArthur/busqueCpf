@@ -1,5 +1,7 @@
 <form (ngSubmit)="onSubmit()" [formGroup]="contato" class="max-w-lg mx-auto bg-gray-100 p-6 rounded-2xl shadow-md space-y-4" id="compra">
-  <h2 class="text-xl text-gray-600 text-center">Precisamos dos seus dados para processar o pagamento via Pix e liberar o relatório do CPF de forma rápida e segura.</h2>
+  <h2 class="text-xl text-gray-600 text-center">
+    Precisamos dos seus dados para processar o pagamento via Pix e liberar o relatório do CPF de forma rápida e segura.
+  </h2>
 
   <!-- Nome -->
   <div>
@@ -27,7 +29,6 @@
     </p>
   </div>
 
-
   <!-- Email -->
   <div>
     <label class="block text-gray-700">Email *</label>
@@ -38,6 +39,21 @@
     <p *ngIf="campoInvalido('email')" class="text-red-500 text-sm">
       Email inválido! Digite um email válido.
     </p>
+  </div>
+
+  <!-- Campo de Cupom com botão -->
+  <div>
+    <label class="block text-gray-700">Cupom de Desconto</label>
+    <div class="flex space-x-2">
+      <input type="text" formControlName="cupom"
+             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+             placeholder="Digite seu cupom (opcional)">
+      <button type="button" (click)="aplicarCupom()"
+              class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        Aplicar
+      </button>
+    </div>
+    <p *ngIf="cupomAplicado" class="p-2" [ngClass]="cupomExistente ? 'text-green-700': 'text-red-700'">{{labelCupom}}</p>
   </div>
 
   <!-- Botão de envio -->
