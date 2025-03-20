@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class PrecoService {
   // Valor original do preço
-  private readonly initialPreco: number = 13.90;
+  private readonly initialPreco: number = 14.90;
 
   // BehaviorSubject para armazenar o preço atual
   private precoSubject: BehaviorSubject<number> = new BehaviorSubject<number>(this.initialPreco);
