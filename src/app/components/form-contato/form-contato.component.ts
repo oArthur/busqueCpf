@@ -43,7 +43,9 @@ export class FormContatoComponent {
   cupomAplicado: boolean = false;
   cupomExistente: boolean = false;
   labelCupom!: string;
+  @Input() showCupom: boolean = true;
   cupom!: CupomResponse;
+  @Input () pacote!: number;
   @Input() cpfBusca!: string;
 
   onSubmit() {
@@ -60,7 +62,7 @@ export class FormContatoComponent {
       document: this.contato.value.cpf!
     };
 
-    this.apiPagarme.createOrder(user, this.cpfBusca, this.cupom).subscribe({
+    this.apiPagarme.createOrder(user, this.cpfBusca, this.cupom, this.pacote).subscribe({
       next: (response) => {
         this.carregando = false;
         if (response && response.id) {

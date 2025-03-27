@@ -13,3 +13,14 @@ export interface Iuser {
   document: string,
   telefone: string
 }
+
+export interface ICardPack {
+  id: number,
+  isMostPopular: boolean,
+  title: string,
+  subtitle: string,
+  value: number,
+  price: number,
+  description: any,
+  buttonLabel: string
+}

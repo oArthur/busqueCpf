@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { CpfService } from '../../services/cpf.service';
 import { FormatCpfService } from '../../services/format-cpf.service';
 import { NgxMaskDirective } from 'ngx-mask';
+import {PrecoService} from '../../services/preco.service';
 
 @Component({
   selector: 'app-input-search',
@@ -37,7 +38,8 @@ export class InputSearchComponent {
   constructor(
     private cpfApiService: CpfService,
     private router: Router,
-    private cpfService: FormatCpfService
+    private cpfService: FormatCpfService,
+    private precoService: PrecoService
   ) {
     // Inicializa o FormControl com o validador customizado
     this.buscaPrincipal = new FormControl('', [
@@ -76,8 +78,9 @@ export class InputSearchComponent {
     event.preventDefault();
     if (this.buscaPrincipal.invalid) return;
 
+    this.precoService.resetPreco()
+
     this.carregando = true;
-    // Desabilita o controle ao iniciar a requisição
     this.buscaPrincipal.disable();
 
     const cpf = (this.buscaPrincipal.value ?? '').toString().replace(/\D/g, '');
