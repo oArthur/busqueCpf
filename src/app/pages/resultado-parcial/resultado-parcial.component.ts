@@ -42,7 +42,7 @@ export class ResultadoParcialComponent {
     { name: "participacao_societaria", label: "Participação Societária", chave: "participacao_societaria", show: true, adicional: true, preco: 10.90 },
     { name: "historico_profissional", label: "Histórico Profissional", chave: "historico_profissional", show: true, adicional: true, preco: 10.90 },
     { name: "telefone", label: "Telefone", chave: "telefones", show: true, adicional: true, preco: 15.90 },
-    { name: "email", label: "E-Mail", chave: "emails", show: true, adicional: true, preco: 10.90 },
+    { name: "email", label: "E-Mail", chave: "emails", show: true, adicional: false, preco: 10.90 },
   ];
 
   constructor(private router: Router) {

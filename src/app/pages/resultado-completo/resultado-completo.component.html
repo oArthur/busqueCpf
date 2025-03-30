@@ -14,9 +14,7 @@
     [comprouAdicionais]="itensJaComprados"
   />
 
-  <app-form-compra *ngIf="!carregando" tipoBusca="completa" [cpf]="this.cpf"/>
-<!--  TODO adicionar alguma logica aqui para isso só aparecer quando o usuario poder
-       comprar algum item ou tiver selecinado aluma coisa para compra, caso contratio nao deve aparecer -->
+  <app-form-compra *ngIf="!carregando && preco > 0" tipoBusca="completa" [cpf]="cpf"></app-form-compra>
 
   <app-transparencia *ngIf="!carregando"/>
 </div>

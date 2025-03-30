@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { ComoComprarComponent } from "../como-comprar/como-comprar.component";
 import { FormCompraComponent } from "../form-compra/form-compra.component";
 import { FormResultadoComponent } from "../../components/form-resultado/form-resultado.component";
@@ -8,6 +8,7 @@ import { CpfService } from '../../services/cpf.service';
 import {BdPedidosService} from '../../services/bd-pedidos.service';
 import {NgIf} from '@angular/common';
 import {PrecoService} from '../../services/preco.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-resultado-completo',
@@ -22,10 +23,12 @@ import {PrecoService} from '../../services/preco.service';
   templateUrl: './resultado-completo.component.html',
   styleUrl: './resultado-completo.component.scss'
 })
-export class ResultadoCompletoComponent implements OnInit {
+export class ResultadoCompletoComponent implements OnInit, OnDestroy {
   cpf!: string;
   id!: string;
   carregando: boolean = false;
+  preco: number = 0;
+  private precoSubscription!: Subscription;
   public itensJaComprados: string[] = [];
   dadosParciais: { name: string, label: string, valor: string, show: boolean, adicional: boolean, preco?: number }[] = [];
 
@@ -52,6 +55,9 @@ export class ResultadoCompletoComponent implements OnInit {
 
   ngOnInit() {
     this.carregando = true
+    this.precoSubscription = this.precoService.preco$.subscribe(value => {
+      this.preco = value;
+    });
     this.route.queryParams.subscribe(params => {
       this.cpf = params['cpf'] || null;
     });
@@ -97,7 +103,7 @@ export class ResultadoCompletoComponent implements OnInit {
         console.log(this.itensJaComprados)
 
         // Continua com o fluxo
-        this.precoService.alterarPreco(14.9, "sub");
+        this.precoService.setPreco(0);
         this.cpfApiService.buscarCpf(this.cpf, true, this.itensJaComprados).subscribe({
           next: (response) => {
             this.carregando = false;
@@ -124,5 +130,10 @@ export class ResultadoCompletoComponent implements OnInit {
     });
 
 
+  }
+  ngOnDestroy() {
+    if (this.precoSubscription) {
+      this.precoSubscription.unsubscribe();
+    }
   }
 }

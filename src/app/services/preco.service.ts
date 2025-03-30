@@ -6,7 +6,9 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class PrecoService {
   // Valor original do preço
-  private readonly initialPreco: number = 14.90;
+  private readonly defaultPreco: number = 14.90;
+
+  private initialPreco: number = this.defaultPreco;
 
   // BehaviorSubject para armazenar o preço atual
   private precoSubject: BehaviorSubject<number> = new BehaviorSubject<number>(this.initialPreco);
@@ -22,6 +24,15 @@ export class PrecoService {
   public getPreco(): number {
     return this.precoSubject.getValue();
   }
+
+  public setPreco(novoPreco: number): void {
+    this.initialPreco = novoPreco;
+
+    this.precoSubject.next(novoPreco);
+
+    this.discountSubject.next(null);
+  }
+
   public alterarPreco(valor: number, operacao: "soma" | "sub"): void {
     const precoAtual = this.getPreco();
     const novoPreco = operacao === "soma" ? precoAtual + valor : precoAtual - valor;
@@ -47,7 +58,8 @@ export class PrecoService {
    * Reseta o preço e remove o desconto.
    */
   public resetPreco(): void {
-    this.precoSubject.next(this.initialPreco);
+    this.initialPreco = this.defaultPreco;
+    this.precoSubject.next(this.defaultPreco);
     this.discountSubject.next(null);
   }
 }
