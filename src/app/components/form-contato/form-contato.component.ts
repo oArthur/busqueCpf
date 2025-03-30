@@ -8,6 +8,7 @@ import {NgxMaskDirective} from 'ngx-mask';
 import {CupomService} from '../../services/cupom.service';
 import {CupomResponse} from '../../interfaces';
 import {PrecoService} from '../../services/preco.service';
+import {AdicionaisService} from '../../services/adicionais.service';
 
 @Component({
   selector: 'app-form-contato',
@@ -29,7 +30,8 @@ export class FormContatoComponent {
     private router: Router,
     private cpfService: FormatCpfService,
     private cupomService: CupomService,
-    private precoService: PrecoService
+    private precoService: PrecoService,
+    private adicionaisService: AdicionaisService
   ) {}
 
   contato = new FormGroup({
@@ -60,7 +62,11 @@ export class FormContatoComponent {
       document: this.contato.value.cpf!
     };
 
-    this.apiPagarme.createOrder(user, this.cpfBusca, this.cupom).subscribe({
+    // Recupera os itens adicionais selecionados (string[])
+    const itensAdicionais = this.adicionaisService.getSelectedItems();
+    const adicionaisParaEnviar = itensAdicionais.length ? itensAdicionais : undefined;
+
+    this.apiPagarme.createOrder(user, this.cpfBusca, this.cupom, adicionaisParaEnviar).subscribe({
       next: (response) => {
         this.carregando = false;
         if (response && response.id) {
@@ -80,6 +86,7 @@ export class FormContatoComponent {
       }
     });
   }
+
 
   campoInvalido(campo: string): boolean {
     return !!(this.contato.get(campo)?.invalid && this.contato.get(campo)?.touched);

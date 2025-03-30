@@ -8,11 +8,11 @@ import {CupomResponse} from '../interfaces';
   providedIn: 'root'
 })
 export class PagarMeService {
-  private baseUrl = 'https://jarvis-app.referencia.company/webhook/generatePayment'
+  private baseUrl = 'https://jarvis-app.referencia.company/webhook-test/generatePayment'
 
   constructor(private http: HttpClient) {}
 
-  createOrder(user: { document: string; nome: string; email: string }, cpf: string | null, cupom?: CupomResponse): Observable<any>{
+  createOrder(user: { document: string; nome: string; email: string }, cpf: string | null, cupom?: CupomResponse, adicionais?: string[]): Observable<any>{
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Accept': 'application/json'
@@ -51,7 +51,8 @@ export class PagarMeService {
         }
       ],
       closed: true,
-      ...(cupom && { cupom: cupom.cupom })
+      ...(cupom && { cupom: cupom.cupom }),
+      ...(adicionais && { adicionais: adicionais })
 
     }
     return this.http.post(this.baseUrl, body, { headers });

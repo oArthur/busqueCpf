@@ -5,58 +5,112 @@
     <span class="ml-3">{{ titulo }}</span>
   </div>
 
+  <!-- Lista de itens "básicos" + adicionais (somente para parcial/completo) -->
   <div class="mt-6 space-y-4">
     <ng-container *ngFor="let item of dados">
-      <div *ngIf="item.show" class="bg-gray-100 p-4 rounded-lg shadow-sm transition-transform transform hover:-translate-y-1 hover:shadow-md">
-        <span class="font-semibold text-gray-700">{{ item.label }}: </span>
-        <span class="text-gray-900 font-medium">
-        {{ item.valor === false ? 'Não' :
-          (item.valor && item.valor !== '{}' ?
-            (item.name === 'cpf' ? (item.valor | cpfFormat) :
-              item.name === 'dta_nascimento' ? (item.valor | dateFormat) :
-                item.valor) : 'Não informado') }}
-      </span>
+      <div
+        *ngIf="item.show && ( !item.adicional || !comprouAdicionais.includes(item.name) )"
+        class="p-4 rounded-lg shadow-sm flex justify-between items-center">
+        <!-- Conteúdo do item -->
+        <div>
+          <span class="font-semibold text-gray-700">{{ item.label }}: </span>
+
+          <!-- Se for resultado parcial e item adicional, mostra somente "Adquira no resultado completo." -->
+          <ng-container *ngIf="!resultadoCompleto && item.adicional; else resultadoCompletoTemplate">
+          <span class="text-gray-600 font-medium ml-2">
+            Adquira no resultado completo.
+          </span>
+          </ng-container>
+
+          <!-- Bloco para resultado completo -->
+          <ng-template #resultadoCompletoTemplate>
+            <!-- Para itens não adicionais, mostra o valor normalmente -->
+            <ng-container *ngIf="!item.adicional">
+            <span class="text-gray-900 font-medium">
+              {{ item.valor || 'Sem registro' }}
+            </span>
+            </ng-container>
+            <!-- Para itens adicionais, mostra o texto processado -->
+            <ng-container *ngIf="item.adicional">
+            <span class="text-gray-900 font-medium">
+              {{ item.valor }}
+            </span>
+            </ng-container>
+          </ng-template>
+        </div>
+        <!-- Botão de ação para itens adicionais, só se for resultado completo e houver registro -->
+        <div *ngIf="resultadoCompleto && item.adicional">
+          <ng-container *ngIf="item.valor !== 'Sem registro'">
+            <ng-container *ngIf="comprouAdicionais.includes(item.name); else naoComprado">
+              <span class="text-green-600 font-medium">Já adquirido</span>
+            </ng-container>
+            <ng-template #naoComprado>
+              <button (click)="toggleSelect(item)"
+                      [ngClass]="{'bg-primaryContrast': !item.selected, 'bg-red-500': item.selected}"
+                      class="px-3 py-2 rounded-md focus:outline-none text-white ml-2">
+                {{ item.selected ? 'Remover' : 'Adicionar por ' + (item.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR') }}
+              </button>
+            </ng-template>
+          </ng-container>
+        </div>
       </div>
     </ng-container>
   </div>
 
 
-
-
-
-
+  <!-- BÔNUS: Se quiser exibir o bloco detalhado apenas em resultado completo ou quando mostrarBotao for falso -->
   <div *ngIf="!mostrarBotao">
-    <!-- Telefones -->
-    <div class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
-      <!-- Título/Label fica sempre visível -->
-      <label class="font-semibold text-gray-700">Telefones</label>
 
-      <!-- Se telefones.length > 0, mostra a lista. Caso contrário, mostra 'Telefone: (Não Encontrado)' -->
-      <div *ngIf="telefones.length > 0; else naoEncontradoTelefones">
+    <!-- Vinculos -->
+    <div *ngIf="vinculos.length > 0" class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
+      <label class="font-semibold text-gray-700">Vínculos</label>
+      <div>
+        <div
+          *ngFor="let vinculo of vinculos"
+          class="p-4 bg-white rounded-lg shadow-sm transition-transform transform hover:-translate-y-1 hover:shadow-md m-2"
+        >
+          <span class="block">
+            <span class="font-bold text-gray-700">CPF Vínculo: </span>
+            <span class="text-gray-700">{{ vinculo.cpf_vinculo | cpfFormat}}</span>
+          </span>
+          <span class="block">
+            <span class="font-bold text-gray-700">Nome Vínculo: </span>
+            <span class="text-gray-700">{{ vinculo.nome_vinculo }}</span>
+          </span>
+          <span class="block">
+            <span class="font-bold text-gray-700">Tipo Vínculo: </span>
+            <span class="text-gray-700">{{ vinculo.tipo_vinculo }}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Telefones -->
+    <div *ngIf="telefones.length > 0" class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
+      <label class="font-semibold text-gray-700">Telefones</label>
+      <div>
         <div
           *ngFor="let telefone of telefones"
           class="p-4 bg-white rounded-lg shadow-sm transition-transform transform hover:-translate-y-1 hover:shadow-md m-2"
         >
-      <span class="block">
-        <span class="font-bold text-gray-700">DDD: </span>
-        <span class="text-gray-700">{{ telefone.ddd }}</span>
-      </span>
           <span class="block">
-        <span class="font-bold text-gray-700">Número: </span>
-        <span class="text-gray-700">{{ telefone.numero }}</span>
-      </span>
+            <span class="font-bold text-gray-700">DDD: </span>
+            <span class="text-gray-700">{{ telefone.ddd }}</span>
+          </span>
           <span class="block">
-        <span class="font-bold text-gray-700">Whatsapp: </span>
-        <span class="text-gray-700">{{ telefone.whatsapp ? 'Sim' : 'Não' }}</span>
-      </span>
+            <span class="font-bold text-gray-700">Número: </span>
+            <span class="text-gray-700">{{ telefone.numero }}</span>
+          </span>
           <span class="block">
-        <span class="font-bold text-gray-700">Tipo: </span>
-        <span class="text-gray-700">{{ telefone.tipo }}</span>
-      </span>
+            <span class="font-bold text-gray-700">Whatsapp: </span>
+            <span class="text-gray-700">{{ telefone.whatsapp ? 'Sim' : 'Não' }}</span>
+          </span>
+          <span class="block">
+            <span class="font-bold text-gray-700">Tipo: </span>
+            <span class="text-gray-700">{{ telefone.tipo }}</span>
+          </span>
         </div>
       </div>
-
-      <!-- Template para o caso em que não há nenhum telefone -->
       <ng-template #naoEncontradoTelefones>
         <div class="p-4 bg-white rounded-lg shadow-sm">
           <span class="text-gray-700 font-medium">Telefone: (Não Encontrado)</span>
@@ -65,43 +119,41 @@
     </div>
 
     <!-- Histórico Profissional -->
-    <div class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
+    <div *ngIf="historicoProfissional.length > 0" class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
       <label class="font-semibold text-gray-700">Histórico Profissional</label>
-
-      <div *ngIf="historicoProfissional.length > 0; else naoEncontradoHistorico">
+      <div>
         <div
           *ngFor="let historico of historicoProfissional"
           class="p-4 bg-white rounded-lg shadow-sm transition-transform transform hover:-translate-y-1 hover:shadow-md m-2"
         >
-      <span class="block">
-        <span class="font-bold text-gray-700">CNPJ: </span>
-        <span class="text-gray-700">{{ historico.cnpj }}</span>
-      </span>
           <span class="block">
-        <span class="font-bold text-gray-700">Razão Social: </span>
-        <span class="text-gray-700">{{ historico.razaoSocial }}</span>
-      </span>
+            <span class="font-bold text-gray-700">CNPJ: </span>
+            <span class="text-gray-700">{{ historico.cnpj }}</span>
+          </span>
           <span class="block">
-        <span class="font-bold text-gray-700">Setor: </span>
-        <span class="text-gray-700">{{ historico.setor }}</span>
-      </span>
+            <span class="font-bold text-gray-700">Razão Social: </span>
+            <span class="text-gray-700">{{ historico.razaoSocial }}</span>
+          </span>
           <span class="block">
-        <span class="font-bold text-gray-700">Cargo: </span>
-        <span class="text-gray-700">{{ historico.cboDescricao }}</span>
-      </span>
+            <span class="font-bold text-gray-700">Setor: </span>
+            <span class="text-gray-700">{{ historico.setor }}</span>
+          </span>
           <span class="block">
-        <span class="font-bold text-gray-700">Faixa Salarial: </span>
-        <span class="text-gray-700">{{ historico.faixaSalarial }}</span>
-      </span>
+            <span class="font-bold text-gray-700">Cargo: </span>
+            <span class="text-gray-700">{{ historico.cboDescricao }}</span>
+          </span>
           <span class="block">
-        <span class="font-bold text-gray-700">Renda Estimada: </span>
-        <span class="text-gray-700">
-          {{ historico.rendaEstimada | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
-        </span>
-      </span>
+            <span class="font-bold text-gray-700">Faixa Salarial: </span>
+            <span class="text-gray-700">{{ historico.faixaSalarial }}</span>
+          </span>
+          <span class="block">
+            <span class="font-bold text-gray-700">Renda Estimada: </span>
+            <span class="text-gray-700">
+              {{ historico.rendaEstimada | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+            </span>
+          </span>
         </div>
       </div>
-
       <ng-template #naoEncontradoHistorico>
         <div class="p-4 bg-white rounded-lg shadow-sm">
           <span class="text-gray-700 font-medium">Histórico Profissional: (Não Encontrado)</span>
@@ -110,33 +162,31 @@
     </div>
 
     <!-- Participação Societária -->
-    <div class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
+    <div *ngIf="participacaoSocietaria.length > 0" class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
       <label class="font-semibold text-gray-700">Participação Societária</label>
-
-      <div *ngIf="participacaoSocietaria.length > 0; else naoEncontradoParticipacao">
+      <div>
         <div
           *ngFor="let participacao of participacaoSocietaria"
           class="p-4 bg-white rounded-lg shadow-sm transition-transform transform hover:-translate-y-1 hover:shadow-md m-2"
         >
-      <span class="block">
-        <span class="font-bold text-gray-700">Cargo: </span>
-        <span class="text-gray-700">{{ participacao.cargo }}</span>
-      </span>
           <span class="block">
-        <span class="font-bold text-gray-700">CNPJ: </span>
-        <span class="text-gray-700">{{ participacao.cnpj }}</span>
-      </span>
+            <span class="font-bold text-gray-700">Cargo: </span>
+            <span class="text-gray-700">{{ participacao.cargo }}</span>
+          </span>
           <span class="block">
-        <span class="font-bold text-gray-700">Data Entrada: </span>
-        <span class="text-gray-700">{{ participacao.dataEntrada }}</span>
-      </span>
+            <span class="font-bold text-gray-700">CNPJ: </span>
+            <span class="text-gray-700">{{ participacao.cnpj }}</span>
+          </span>
           <span class="block">
-        <span class="font-bold text-gray-700">Razão Social: </span>
-        <span class="text-gray-700">{{ participacao.razaoSocial }}</span>
-      </span>
+            <span class="font-bold text-gray-700">Data Entrada: </span>
+            <span class="text-gray-700">{{ participacao.dataEntrada }}</span>
+          </span>
+          <span class="block">
+            <span class="font-bold text-gray-700">Razão Social: </span>
+            <span class="text-gray-700">{{ participacao.razaoSocial }}</span>
+          </span>
         </div>
       </div>
-
       <ng-template #naoEncontradoParticipacao>
         <div class="p-4 bg-white rounded-lg shadow-sm">
           <span class="text-gray-700 font-medium">Participação Societária: (Não Encontrado)</span>
@@ -145,10 +195,9 @@
     </div>
 
     <!-- E-Mails -->
-    <div class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
+    <div *ngIf="emails.length > 0" class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
       <label class="font-semibold text-gray-700">E-Mail</label>
-
-      <div *ngIf="emails.length > 0; else naoEncontradoEmail">
+      <div>
         <div
           *ngFor="let email of emails"
           class="p-4 bg-white rounded-lg shadow-sm transition-transform transform hover:-translate-y-1 hover:shadow-md m-2"
@@ -156,7 +205,6 @@
           <span class="text-gray-700">{{ email }}</span>
         </div>
       </div>
-
       <ng-template #naoEncontradoEmail>
         <div class="p-4 bg-white rounded-lg shadow-sm">
           <span class="text-gray-700 font-medium">E-Mail: (Não Encontrado)</span>
@@ -165,58 +213,56 @@
     </div>
 
     <!-- Endereços -->
-    <div class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
+    <div *ngIf="enderecos.length > 0" class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
       <label class="font-semibold text-gray-700">Endereço</label>
-
-      <div *ngIf="enderecos.length > 0; else naoEncontradoEndereco">
+      <div>
         <div
           *ngFor="let endereco of enderecos"
           class="p-4 bg-white rounded-lg shadow-sm transition-transform transform hover:-translate-y-1 hover:shadow-md m-2"
         >
-      <span class="block">
-        <span class="font-bold text-gray-700">Logradouro: </span>
-        <span class="text-gray-700">{{ endereco.logradouro }}</span>
-      </span>
+          <span class="block">
+            <span class="font-bold text-gray-700">Logradouro: </span>
+            <span class="text-gray-700">{{ endereco.logradouro }}</span>
+          </span>
           <span class="block" *ngIf="endereco.numero">
-        <span class="font-bold text-gray-700">Número: </span>
-        <span class="text-gray-700">{{ endereco.numero }}</span>
-      </span>
+            <span class="font-bold text-gray-700">Número: </span>
+            <span class="text-gray-700">{{ endereco.numero }}</span>
+          </span>
           <span class="block" *ngIf="endereco.complemento">
-        <span class="font-bold text-gray-700">Complemento: </span>
-        <span class="text-gray-700">{{ endereco.complemento }}</span>
-      </span>
+            <span class="font-bold text-gray-700">Complemento: </span>
+            <span class="text-gray-700">{{ endereco.complemento }}</span>
+          </span>
           <span class="block">
-        <span class="font-bold text-gray-700">Bairro: </span>
-        <span class="text-gray-700">{{ endereco.bairro }}</span>
-      </span>
+            <span class="font-bold text-gray-700">Bairro: </span>
+            <span class="text-gray-700">{{ endereco.bairro }}</span>
+          </span>
           <span class="block">
-        <span class="font-bold text-gray-700">Cidade: </span>
-        <span class="text-gray-700">{{ endereco.cidade }}</span>
-      </span>
+            <span class="font-bold text-gray-700">Cidade: </span>
+            <span class="text-gray-700">{{ endereco.cidade }}</span>
+          </span>
           <span class="block">
-        <span class="font-bold text-gray-700">UF: </span>
-        <span class="text-gray-700">{{ endereco.uf }}</span>
-      </span>
+            <span class="font-bold text-gray-700">UF: </span>
+            <span class="text-gray-700">{{ endereco.uf }}</span>
+          </span>
           <span class="block">
-        <span class="font-bold text-gray-700">CEP: </span>
-        <span class="text-gray-700">{{ endereco.cep }}</span>
-      </span>
+            <span class="font-bold text-gray-700">CEP: </span>
+            <span class="text-gray-700">{{ endereco.cep }}</span>
+          </span>
         </div>
       </div>
-
       <ng-template #naoEncontradoEndereco>
         <div class="p-4 bg-white rounded-lg shadow-sm">
           <span class="text-gray-700 font-medium">Endereço: (Não Encontrado)</span>
         </div>
       </ng-template>
     </div>
+
   </div>
 
-  <p class="text-gray-600 p-5 text-center" *ngIf="mostrarBotao">O status "Verificado" indica apenas que a consulta foi realizada em nossos bancos de dados, não significando, necessariamente, a existência de informações relacionadas.</p>
-
-  <!-- Botão -->
+  <!-- Botão para compra, se desejar -->
   <div class="mt-6" *ngIf="mostrarBotao">
-    <button (click)="scrollParaCompra()" class="w-full bg-blue-900 text-white py-3 rounded-lg font-bold text-lg transition-transform transform hover:-translate-y-1 hover:shadow-md">
+    <button (click)="scrollParaCompra()"
+            class="w-full bg-blue-900 text-white py-3 rounded-lg font-bold text-lg transition-transform transform hover:-translate-y-1 hover:shadow-md">
       {{ textoBotao }}
     </button>
   </div>

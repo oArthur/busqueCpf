@@ -24,25 +24,25 @@ import { NgIf } from '@angular/common';
 export class ResultadoParcialComponent {
 
   cpf: string | null = null;
-  dadosParciais: { name: string, label: string, valor: string, show: boolean }[] = [];
+  dadosParciais: { name: string, label: string, valor: string, show: boolean, adicional: boolean, preco?: number }[] = [];
   carregando: boolean = false;
 
   // Labels fixas que sempre aparecem na tela
-  labelsFixas: { name: string, label: string, chave: string, show: boolean }[] = [
-    { name: "nome", label: "Nome Completo", chave: "nome", show: true },
-    { name: "genero", label: "Gênero", chave: "", show: true },
-    { name: "dta_nascimento", label: "Data de Nascimento", chave: "data_nascimento", show: true },
-    { name: "nome_mae", label: "Nome da Mãe", chave: "", show: true },
-    { name: "cpf", label: "CPF", chave: "cpf", show: true },
-    { name: "situcao_cpf", label: "Situação do CPF", chave: "", show: true },
-    { name: "obito", label: "Provável Óbito", chave: "", show: true },
-    { name: "ocupacao", label: "Ocupação Profissional", chave: "", show: true },
-    { name: "renda", label: "Renda", chave: "", show: true },
-    { name: "vinculos", label: "Vínculos", chave: "", show: true },
-    { name: "participacao_societaria", label: "Participação Societária", chave: "", show: true },
-    { name: "historico_profissional", label: "Histórico Profissional", chave: "", show: true },
-    { name: "telefone", label: "Telefone", chave: "", show: true },
-    { name: "email", label: "E-Mail", chave: "", show: true },
+  labelsFixas: { name: string, label: string, chave: string, show: boolean, adicional: boolean, preco?: number }[] = [
+    { name: "nome", label: "Nome Completo", chave: "nome", show: true, adicional: false },
+    { name: "genero", label: "Gênero", chave: "sexo", show: true, adicional: false },
+    { name: "dta_nascimento", label: "Data de Nascimento", chave: "data_nascimento", show: true, adicional: false },
+    { name: "nome_mae", label: "Nome da Mãe", chave: "nome_mae", show: true, adicional: false },
+    { name: "cpf", label: "CPF", chave: "cpf", show: true, adicional: false },
+    { name: "situcao_cpf", label: "Situação do CPF", chave: "situacao_cpf", show: true, adicional: false },
+    { name: "obito", label: "Provável Óbito", chave: "obito", show: true, adicional: false },
+    { name: "ocupacao", label: "Ocupação Profissional", chave: "ocupacao", show: true, adicional: false },
+    { name: "renda", label: "Renda", chave: "renda", show: true, adicional: false },
+    { name: "vinculos", label: "Vínculos", chave: "vinculos", show: true, adicional: true, preco: 10.90 },
+    { name: "participacao_societaria", label: "Participação Societária", chave: "participacao_societaria", show: true, adicional: true, preco: 10.90 },
+    { name: "historico_profissional", label: "Histórico Profissional", chave: "historico_profissional", show: true, adicional: true, preco: 10.90 },
+    { name: "telefone", label: "Telefone", chave: "telefones", show: true, adicional: true, preco: 15.90 },
+    { name: "email", label: "E-Mail", chave: "emails", show: true, adicional: true, preco: 10.90 },
   ];
 
   constructor(private router: Router) {
@@ -61,7 +61,9 @@ export class ResultadoParcialComponent {
         label: item.label,
         valor: this.formatarValor(item.chave, dadosObj[item.chave]),
         show: item.show,
-        name: item.name
+        name: item.name,
+        adicional: item.adicional,
+        preco: item.preco
       }));
       this.carregando = false;
     } else {

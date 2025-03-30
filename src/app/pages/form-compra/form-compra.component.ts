@@ -3,6 +3,7 @@ import {FormContatoComponent} from '../../components/form-contato/form-contato.c
 import {PrecoService} from '../../services/preco.service';
 import {Subscription} from 'rxjs';
 import {CurrencyPipe, DecimalPipe, NgIf} from '@angular/common';
+import {CpfFormatPipe} from '../../pipes/cpf-format.pipe';
 
 @Component({
   selector: 'app-form-compra',
@@ -11,12 +12,15 @@ import {CurrencyPipe, DecimalPipe, NgIf} from '@angular/common';
     FormContatoComponent,
     CurrencyPipe,
     DecimalPipe,
-    NgIf
+    NgIf,
+    CpfFormatPipe
   ],
   templateUrl: './form-compra.component.html',
   styleUrl: './form-compra.component.scss'
 })
 export class FormCompraComponent implements OnInit, OnDestroy{
+
+  @Input() tipoBusca: "completa" | "parcial" = "parcial"
 
   preco!: number;
   discountValue: number | null = null;

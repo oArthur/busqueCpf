@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CpfService } from '../../services/cpf.service';
 import {BdPedidosService} from '../../services/bd-pedidos.service';
 import {NgIf} from '@angular/common';
+import {PrecoService} from '../../services/preco.service';
 
 @Component({
   selector: 'app-resultado-completo',
@@ -25,27 +26,30 @@ export class ResultadoCompletoComponent implements OnInit {
   cpf!: string;
   id!: string;
   carregando: boolean = false;
-  dadosParciais: { name: string, label: string, valor: string, show: boolean }[] = [];
+  itensJaComprados = []
+  // "enderecos", "telefone", "vinculos"
+  // TODO preciso setar aqui os itens adicionais para ser renderizados.
+  dadosParciais: { name: string, label: string, valor: string, show: boolean, adicional: boolean, preco?: number }[] = [];
 
-  constructor(private router: Router, private cpfApiService: CpfService, private route: ActivatedRoute, private bdPedidosService: BdPedidosService) {}
+  constructor(private router: Router, private cpfApiService: CpfService, private route: ActivatedRoute, private bdPedidosService: BdPedidosService, private precoService: PrecoService) {}
 
   // Labels fixas que sempre aparecem na tela
-  labelsFixas: { name: string, label: string, chave: string, show: boolean }[] = [
-    { name: "nome", label: "Nome Completo", chave: "nome", show: true},
-    { name: "genero", label: "Gênero", chave: "sexo", show: true },
-    { name: "dta_nascimento", label: "Data de Nascimento", chave: "data_nascimento", show: true },
-    { name: "nome_mae", label: "Nome da Mãe", chave: "nome_mae", show: true },
-    { name: "cpf", label: "CPF", chave: "cpf", show: true },
-    { name: "situcao_cpf", label: "Situação do CPF", chave: "situacao_cpf", show: true },
-    { name: "obito", label: "Provável Óbito", chave: "obito", show: true },
-    { name: "ocupacao", label: "Ocupação Profissional", chave: "ocupacao", show: true },
-    { name: "renda", label: "Renda", chave: "renda", show: true },
-    { name: "vinculos", label: "Vínculos", chave: "vinculos", show: false },
-    { name: "participacao_societaria", label: "Participação Societária", chave: "participacao_societaria", show: false },
-    { name: "historico_profissional", label: "Histórico Profissional", chave: "historico_profissional", show: false },
-    { name: "telefone", label: "Telefone", chave: "telefones", show: false },
-    { name: "email", label: "E-Mail", chave: "emails", show: false },
-    { name: "enderecos", label: "Endereço", chave: "enderecos", show: false }
+  labelsFixas: { name: string, label: string, chave: string, show: boolean, adicional: boolean, preco?: number }[] = [
+    { name: "nome", label: "Nome Completo", chave: "nome", show: true,adicional: false},
+    { name: "genero", label: "Gênero", chave: "sexo", show: true,adicional: false },
+    { name: "dta_nascimento", label: "Data de Nascimento", chave: "data_nascimento", show: true,adicional: false },
+    { name: "nome_mae", label: "Nome da Mãe", chave: "nome_mae", show: true,adicional: false },
+    { name: "cpf", label: "CPF", chave: "cpf", show: true,adicional: false },
+    { name: "situcao_cpf", label: "Situação do CPF", chave: "situacao_cpf", show: true,adicional: false },
+    { name: "obito", label: "Provável Óbito", chave: "obito", show: true,adicional: false },
+    { name: "ocupacao", label: "Ocupação Profissional", chave: "ocupacao", show: true,adicional: false },
+    { name: "renda", label: "Renda", chave: "renda", show: true,adicional: false },
+    { name: "vinculos", label: "Vínculos", chave: "vinculos", show: true, adicional: true, preco: 10.90 },
+    { name: "participacao_societaria", label: "Participação Societária", chave: "participacao_societaria", show: true, adicional: true, preco: 10.90 },
+    { name: "historico_profissional", label: "Histórico Profissional", chave: "historico_profissional", show: true, adicional: true, preco: 10.90 },
+    { name: "telefone", label: "Telefone", chave: "telefones", show: true, adicional: true, preco: 10.90 },
+    { name: "email", label: "E-Mail", chave: "emails", show: true, adicional: true, preco: 10.90 },
+    { name: "enderecos", label: "Endereço", chave: "enderecos", show: true, adicional: true, preco: 10.90 }
   ];
 
   ngOnInit() {
@@ -79,7 +83,9 @@ export class ResultadoCompletoComponent implements OnInit {
       label: item.label,
       valor: dados[item.chave],
       name: item.name,
-      show: item.show
+      show: item.show,
+      adicional: item.adicional,
+      preco: item.preco
     }));
   }
 
@@ -89,8 +95,9 @@ export class ResultadoCompletoComponent implements OnInit {
     this.bdPedidosService.verificarStatusPedido(this.id, this.cpf).subscribe({
       next: (pagamentoAprovado) => {
         if (pagamentoAprovado) {
-          // Se pagamento está aprovado, busca os dados do CPF
-          this.cpfApiService.buscarCpf(this.cpf, true).subscribe({
+          // TODO get em itens adicionais.
+          this.precoService.alterarPreco(13.9, "sub")
+          this.cpfApiService.buscarCpf(this.cpf, true, this.itensJaComprados).subscribe({
             next: (response) => {
               this.carregando = false;
               if (response) {
