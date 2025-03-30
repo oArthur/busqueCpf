@@ -52,7 +52,7 @@ export class FormResultadoComponent implements OnInit {
     }));
 
     // Telefones
-    const telefoneItem = this.dados.find(item => item.name === 'telefone');
+    const telefoneItem = this.dados.find(item => item.name === 'telefones');
     if (telefoneItem && Array.isArray(telefoneItem.valor)) {
       this.telefones = telefoneItem.valor;
     }
@@ -70,7 +70,7 @@ export class FormResultadoComponent implements OnInit {
     }
 
     // E-mails
-    const emailItem = this.dados.find(item => item.name === 'email');
+    const emailItem = this.dados.find(item => item.name === 'emails');
     if (emailItem && Array.isArray(emailItem.valor)) {
       this.emails = emailItem.valor;
     }

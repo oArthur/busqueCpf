@@ -37,7 +37,6 @@ export class CpfService {
       const mainFields = ['nome', 'data_nascimento', 'cpf'];
       const countFields: { [key: string]: { singular: string, plural: string } } = {
         telefones: { singular: 'telefone', plural: 'telefones' },
-        emails: { singular: 'e-mail', plural: 'e-mails' },
         historico_profissional: { singular: 'registro de histórico profissional', plural: 'registros de histórico profissional' },
         participacao_societaria: { singular: 'registro de participação societária', plural: 'registros de participação societária' },
         vinculos: { singular: 'registro de vínculo', plural: 'registros de vínculos' },

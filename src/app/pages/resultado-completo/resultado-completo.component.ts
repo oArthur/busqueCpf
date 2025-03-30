@@ -26,9 +26,7 @@ export class ResultadoCompletoComponent implements OnInit {
   cpf!: string;
   id!: string;
   carregando: boolean = false;
-  itensJaComprados = []
-  // "enderecos", "telefone", "vinculos"
-  // TODO preciso setar aqui os itens adicionais para ser renderizados.
+  public itensJaComprados: string[] = [];
   dadosParciais: { name: string, label: string, valor: string, show: boolean, adicional: boolean, preco?: number }[] = [];
 
   constructor(private router: Router, private cpfApiService: CpfService, private route: ActivatedRoute, private bdPedidosService: BdPedidosService, private precoService: PrecoService) {}
@@ -47,8 +45,8 @@ export class ResultadoCompletoComponent implements OnInit {
     { name: "vinculos", label: "Vínculos", chave: "vinculos", show: true, adicional: true, preco: 10.90 },
     { name: "participacao_societaria", label: "Participação Societária", chave: "participacao_societaria", show: true, adicional: true, preco: 10.90 },
     { name: "historico_profissional", label: "Histórico Profissional", chave: "historico_profissional", show: true, adicional: true, preco: 10.90 },
-    { name: "telefone", label: "Telefone", chave: "telefones", show: true, adicional: true, preco: 10.90 },
-    { name: "email", label: "E-Mail", chave: "emails", show: true, adicional: true, preco: 10.90 },
+    { name: "telefones", label: "Telefone", chave: "telefones", show: true, adicional: true, preco: 15.90 },
+    { name: "emails", label: "E-Mail", chave: "emails", show: false, adicional: false },
     { name: "enderecos", label: "Endereço", chave: "enderecos", show: true, adicional: true, preco: 10.90 }
   ];
 
@@ -93,32 +91,30 @@ export class ResultadoCompletoComponent implements OnInit {
     this.carregando = true;
 
     this.bdPedidosService.verificarStatusPedido(this.id, this.cpf).subscribe({
-      next: (pagamentoAprovado) => {
-        if (pagamentoAprovado) {
-          // TODO get em itens adicionais.
-          this.precoService.alterarPreco(13.9, "sub")
-          this.cpfApiService.buscarCpf(this.cpf, true, this.itensJaComprados).subscribe({
-            next: (response) => {
-              this.carregando = false;
-              if (response) {
-                const dadosObj = Array.isArray(response) && response.length > 0 ? response[0] : {};
-                this.montarDados(dadosObj);
-              } else {
-                alert("CPF não encontrado ou bloqueado.");
-                this.router.navigate(['/']); // Redireciona caso CPF não seja encontrado
-              }
-            },
-            error: () => {
-              this.carregando = false;
-              alert("Erro ao buscar CPF. Tente novamente mais tarde.");
-              this.router.navigate(['/']); // Redireciona em caso de erro
+      next: (result: any) => {
+        // Garante que result seja um array de strings; se não, atribui um array vazio.
+        this.itensJaComprados = Array.isArray(result) ? result : [];
+        console.log(this.itensJaComprados)
+
+        // Continua com o fluxo
+        this.precoService.alterarPreco(14.9, "sub");
+        this.cpfApiService.buscarCpf(this.cpf, true, this.itensJaComprados).subscribe({
+          next: (response) => {
+            this.carregando = false;
+            if (response) {
+              const dadosObj = Array.isArray(response) && response.length > 0 ? response[0] : {};
+              this.montarDados(dadosObj);
+            } else {
+              alert("CPF não encontrado ou bloqueado.");
+              this.router.navigate(['/']);
             }
-          });
-        } else {
-          // Se pagamento não está aprovado, redireciona
-          this.carregando = false;
-          this.router.navigate(['/']);
-        }
+          },
+          error: () => {
+            this.carregando = false;
+            alert("Erro ao buscar CPF. Tente novamente mais tarde.");
+            this.router.navigate(['/']);
+          }
+        });
       },
       error: () => {
         this.carregando = false;
@@ -126,5 +122,7 @@ export class ResultadoCompletoComponent implements OnInit {
         this.router.navigate(['/']);
       }
     });
+
+
   }
 }

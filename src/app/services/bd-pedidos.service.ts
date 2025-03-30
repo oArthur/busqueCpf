@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {catchError, map, Observable} from 'rxjs';
+import {catchError, map, Observable, of} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,18 +10,23 @@ export class BdPedidosService {
 
   constructor(private http: HttpClient) {}
 
-  verificarStatusPedido(id: string, cpf: string): Observable<boolean> {
-    return this.http.get<{ success?: boolean }>(`${this.apiUrl}?id=${id}&cpf=${cpf}`)
+  verificarStatusPedido(id: string, cpf: string): Observable<string[]> {
+    return this.http.get<{ success?: boolean, itens?: string[] }>(`${this.apiUrl}?id=${id}&cpf=${cpf}`)
       .pipe(
-        map(response => response.success === true), // Retorna true apenas se `success` for true
+        map(response => {
+          // Se a resposta indicar sucesso e possuir itens, retorna-os; caso contrário, retorna um array vazio.
+          if (response.success === true && Array.isArray(response.itens)) {
+            return response.itens;
+          }
+          return [];
+        }),
         catchError(() => {
-          return new Observable<boolean>(observer => {
-            observer.next(false); // Em caso de erro, assume que o pagamento NÃO está aprovado
-            observer.complete();
-          });
+          // Em caso de erro, assume que não há itens (ou seja, pagamento não aprovado)
+          return of([]);
         })
       );
   }
+
 
 
 }
