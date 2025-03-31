@@ -5,11 +5,12 @@ import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { PrecoService } from '../../services/preco.service';
 import { Subscription } from 'rxjs';
 import {AdicionaisService} from '../../services/adicionais.service';
+import {NgxMaskPipe} from 'ngx-mask';
 
 @Component({
   selector: 'app-form-resultado',
   standalone: true,
-  imports: [NgForOf, NgIf, CurrencyPipe, CpfFormatPipe, DatePipe, DateFormatPipe, NgClass],
+  imports: [NgForOf, NgIf, CurrencyPipe, CpfFormatPipe, DatePipe, DateFormatPipe, NgClass, NgxMaskPipe],
   templateUrl: './form-resultado.component.html',
   styleUrls: ['./form-resultado.component.scss']
 })

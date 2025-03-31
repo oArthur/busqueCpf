@@ -175,15 +175,19 @@
           </span>
           <span class="block">
             <span class="font-bold text-gray-700">CNPJ: </span>
-            <span class="text-gray-700">{{ participacao.cnpj }}</span>
+            <span class="text-gray-700">{{ participacao.cnpj | mask:"00.000.000/0000-00" }}</span>
           </span>
           <span class="block">
             <span class="font-bold text-gray-700">Data Entrada: </span>
-            <span class="text-gray-700">{{ participacao.dataEntrada }}</span>
+            <span class="text-gray-700">{{ participacao.data_entrada }}</span>
           </span>
           <span class="block">
             <span class="font-bold text-gray-700">Razão Social: </span>
-            <span class="text-gray-700">{{ participacao.razaoSocial }}</span>
+            <span class="text-gray-700">{{ participacao.razao_social }}</span>
+          </span>
+          <span class="block">
+            <span class="font-bold text-gray-700">Situação: </span>
+            <span class="text-gray-700">{{ participacao.situacao_cadastral }}</span>
           </span>
         </div>
       </div>
