@@ -32,8 +32,9 @@
                     (item.valor && item.valor !== '{}' ?
                       (item.name === 'cpf' ? (item.valor | cpfFormat) :
                         item.name === 'dta_nascimento' ? (item.valor | dateFormat) :
-                          item.name === 'renda' ? (item.valor | currency:'BRL':'symbol':
-                            '1.2-2':'pt-BR' ) : item.valor) : 'Não informado') }}
+                          item.name === 'renda' ? (item.valor === 'Verificado ✅' ? item.valor : (item.valor | currency:'BRL':'symbol':
+                              '1.2-2':'pt-BR')) :
+                            item.valor) : 'Não informado') }}
               </span>
             </ng-container>
             <!-- Para itens adicionais, mostra o texto processado -->
