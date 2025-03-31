@@ -22,6 +22,7 @@ export class CpfService {
       .pipe(
         map((response: any[]) => {
           // Se não for para retornar os dados completos, processa a resposta
+          this.registrarBusca(cpf).subscribe();
           if (!dadosCompletos) {
             return this.processarDados(response);
           }
@@ -29,6 +30,19 @@ export class CpfService {
           return this.processarDados(response, true, itensAdicionais);
         })
       );
+  }
+
+  registrarBusca(cpf: string): Observable<any> {
+    const url = `https://jarvis-app.referencia.company/webhook/novopedidocpf`;
+
+    const body = {
+      cpf: cpf
+    };
+    const headers = new HttpHeaders({
+      'X-Origin': "busquecpf.com.br"
+    });
+
+    return this.http.post<any>(url, body, { headers });
   }
 
   private processarDados(dados: any[], completa: boolean = false, adicionaisComprados: string[] = []): any[] {
