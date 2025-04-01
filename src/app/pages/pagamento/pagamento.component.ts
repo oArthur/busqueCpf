@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PagarMeService } from '../../services/pagar-me.service';
 import { TitleComponent } from '../../components/title/title.component';
-import { NgIf } from '@angular/common';
+import {CurrencyPipe, NgIf} from '@angular/common';
 import {FormResultadoComponent} from '../../components/form-resultado/form-resultado.component';
 import {CpfService} from '../../services/cpf.service';
 
@@ -13,7 +13,8 @@ import {CpfService} from '../../services/cpf.service';
   imports: [
     TitleComponent,
     NgIf,
-    FormResultadoComponent
+    FormResultadoComponent,
+    CurrencyPipe
   ],
   styleUrls: ['./pagamento.component.scss']
 })
@@ -25,8 +26,10 @@ export class PagamentoComponent implements OnInit, OnDestroy {
   isLoading = true
   cpf!: string;
   id!: string;
+  idPrincipal!: string;
   tentativas:number = 0;
   maxTentativas:number = 13;
+  isAdicionais: boolean = false;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -37,10 +40,13 @@ export class PagamentoComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe(params => {
       this.cpf = params['cpf'] || null;
       this.id = params['id'] || null;
+      this.idPrincipal = params['idPrincipal'] || null;
+    //   ID da primeira compra realizada (compra de pedido completo.).
     });
     console.log(`cpf: ${this.cpf}, id_pedido: ${this.id}`)
     if (history.state && history.state['pagamento']) {
       this.pagamento = history.state['pagamento'];
+      this.isAdicionais = history.state['isAdicionais'] || false;
       console.log("Dados carregados no componente de pagamento:", this.pagamento);
       this.carregando = false;
       this.iniciarVerificacaoAutomatica();
@@ -67,22 +73,31 @@ export class PagamentoComponent implements OnInit, OnDestroy {
 
   verificarPagamento() {
     if (!this.pagamento.id) return;
-
+    // TODO parei aqui, estava fazendo a logica de quando o pedido adicional é pago
     this.apiPagarme.getOrderApproved(this.pagamento.id).subscribe({
       next: (statusPago) => {
         if (statusPago) {
-          this.buscaCpfApi()
+          // Se for nova compra, redireciona para o resultado completo automaticamente.
+          // Se for compra de itens adicionais, atualiza o status mas não redireciona.
+          if (!this.isAdicionais) {
+            this.buscaCpfApi();
+          } else {
+            this.status = "Pagamento aprovado para itens adicionais.";
+            // Aqui você pode interromper a verificação automática, se desejar:
+            this.buscaCpfApi();
+            clearInterval(this.intervaloVerificacao);
+          }
         } else {
           this.status = "Aguardando pagamento...";
         }
       },
       error: () => {
         this.status = "Erro ao verificar pagamento.";
-        this.isLoading = false
+        this.isLoading = false;
       }
     });
   }
-
+  // TODO, mesmo com o pagamento aprovado o usuario não foi redirecionado para o lugar correto.
   buscaCpfApi(){
     clearInterval(this.intervaloVerificacao);
     this.cpfApiService.buscarCpf(this.cpf, true).subscribe({
@@ -90,9 +105,10 @@ export class PagamentoComponent implements OnInit, OnDestroy {
         this.carregando = false;
 
         if (response) {
-          this.isLoading = false
-          this.router.navigate([`/resultado-completo/${this.id}`], {
-            queryParams: {cpf: this.cpf},
+          this.isLoading = false;
+          const pathId = this.idPrincipal ? this.idPrincipal : this.id;
+          this.router.navigate([`/resultado-completo/${pathId}`], {
+            queryParams: { cpf: this.cpf },
             state: { dados: response, cpf: this.cpf }
           });
         } else {

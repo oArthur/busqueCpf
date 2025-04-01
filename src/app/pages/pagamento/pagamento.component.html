@@ -11,7 +11,7 @@
   />
 
   <h2 class="text-xl font-bold border-y-gray-600 mt-5 text-primary">
-    Valor: R$ {{ pagamento.valor / 100 }}
+    Valor: R$ {{ pagamento.valor / 100 | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
   </h2>
 
   <!-- Campo com o QR Code -->
@@ -40,33 +40,34 @@
     </div>
   </div>
 
-  <div class="flex flex-col justify-center items-center gap-5 w-1/2">
-    <h2 class="text-lg font-semibold mt-5">Status do pagamento: {{ status }}</h2>
-    <p class="text-gray-700 text-sm mt-4 text-center">
+  <div class="max-w-md mx-auto p-4 sm:p-6 md:p-8 bg-white shadow-lg rounded-lg">
+    <h2 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-4">
+      Status do pagamento: {{ status }}
+    </h2>
+    <p class="text-gray-600 text-sm sm:text-base mb-2 text-center">
       O pagamento pode levar até <strong>60 segundos</strong> para ser validado.
     </p>
-    <p class="text-gray-700 text-sm mt-2 text-center">
+    <p class="text-gray-600 text-sm sm:text-base mb-2 text-center">
       Para liberar a consulta completa, realize o pagamento.
     </p>
-    <p class="text-gray-700 text-sm mt-2 text-center">
+    <p class="text-gray-600 text-sm sm:text-base mb-2 text-center">
       Assim que o pagamento for identificado, você será
       <strong>redirecionado automaticamente</strong> para o resultado completo.
     </p>
 
-    <p
-      class="text-gray-700 text-sm mt-2 text-center"
-      *ngIf="verificarPagamento"
-    >
-      Caso tenha realizado o pagamento e não tenha sido redirecionado, clique no
-      botão abaixo para verificar o pagamento.
+    <p class="text-gray-600 text-sm sm:text-base mb-4 text-center" *ngIf="verificarPagamento">
+      Caso tenha realizado o pagamento e não tenha sido redirecionado, clique no botão abaixo para verificar o pagamento.
     </p>
 
-    <button
-      *ngIf="verificarPagamento"
-      (click)="verificarPagamento()"
-      class="w-1/2 mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition text-sm"
-    >
-      Verificar Pagamento
-    </button>
+    <div class="flex justify-center">
+      <button
+        *ngIf="verificarPagamento"
+        (click)="verificarPagamento()"
+        class="w-full sm:w-auto bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-300 text-sm"
+      >
+        Verificar Pagamento
+      </button>
+    </div>
   </div>
+
 </div>

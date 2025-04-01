@@ -1,13 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgClass, NgIf } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormatCpfService } from '../../services/format-cpf.service';
 import { PagarMeService } from '../../services/pagar-me.service';
-import { Router } from '@angular/router';
-import {NgxMaskDirective} from 'ngx-mask';
-import {CupomService} from '../../services/cupom.service';
-import {CupomResponse} from '../../interfaces';
-import {PrecoService} from '../../services/preco.service';
+import { NgxMaskDirective } from 'ngx-mask';
+import { CupomService } from '../../services/cupom.service';
+import { CupomResponse } from '../../interfaces';
+import { PrecoService } from '../../services/preco.service';
+import { AdicionaisService } from '../../services/adicionais.service';
 
 @Component({
   selector: 'app-form-contato',
@@ -22,21 +23,25 @@ import {PrecoService} from '../../services/preco.service';
   templateUrl: './form-contato.component.html',
   styleUrl: './form-contato.component.scss'
 })
-export class FormContatoComponent {
+export class FormContatoComponent implements OnInit {
+  // Variável para armazenar o idPedido recebido via rota (opcional)
+  idPedido: string | null = null;
 
   constructor(
     private apiPagarme: PagarMeService,
     private router: Router,
+    private route: ActivatedRoute,
     private cpfService: FormatCpfService,
     private cupomService: CupomService,
-    private precoService: PrecoService
+    private precoService: PrecoService,
+    private adicionaisService: AdicionaisService
   ) {}
 
   contato = new FormGroup({
     nome: new FormControl<string | null>('', [Validators.required, Validators.minLength(3)]),
     cpf: new FormControl<string | null>('', [Validators.required, Validators.pattern(/^\d{11}$/)]),
     email: new FormControl<string | null>('', [Validators.required, Validators.email]),
-    cupom: new FormControl<string | null>('',)
+    cupom: new FormControl<string | null>(''),
   });
 
   carregando = false;
@@ -45,6 +50,15 @@ export class FormContatoComponent {
   labelCupom!: string;
   cupom!: CupomResponse;
   @Input() cpfBusca!: string;
+
+  ngOnInit(): void {
+    // Se a rota estiver configurada como /resultado-completo/:id,
+    // recupera o parâmetro "id"
+    this.route.paramMap.subscribe(params => {
+      this.idPedido = params.get('id');
+      console.log('idPedido:', this.idPedido);
+    });
+  }
 
   onSubmit() {
     if (this.contato.invalid) {
@@ -60,16 +74,28 @@ export class FormContatoComponent {
       document: this.contato.value.cpf!
     };
 
-    this.apiPagarme.createOrder(user, this.cpfBusca, this.cupom).subscribe({
+    // Recupera os itens adicionais selecionados (string[])
+    const itensAdicionais = this.adicionaisService.getSelectedItems();
+    const adicionaisParaEnviar = itensAdicionais.length ? itensAdicionais : undefined;
+    const isAdicionais = !!adicionaisParaEnviar;
+
+    // Se idPedido existir, significa que é uma compra de item adicional.
+    // Ajuste a chamada de createOrder para receber esse parâmetro opcional, se necessário.
+    this.apiPagarme.createOrder(user, this.cpfBusca, this.cupom, adicionaisParaEnviar,
+      this.idPedido || undefined).subscribe({
       next: (response) => {
         this.carregando = false;
         if (response && response.id) {
-          const pedidoId = response.id;
           console.log(`Resposta da API no form-contato: ${response}`);
           this.router.navigate(['/pagamento'], {
-            queryParams: { cpf: this.cpfBusca, id: response.id },
-            state: { pagamento: response }
+            queryParams: {
+              cpf: this.cpfBusca,
+              id: response.id,
+              ...(this.idPedido ? { idPrincipal: this.idPedido } : {})
+            },
+            state: { pagamento: response, isAdicionais }
           });
+
         } else {
           alert("Erro ao gerar pedido. Tente novamente.");
         }
@@ -85,17 +111,10 @@ export class FormContatoComponent {
     return !!(this.contato.get(campo)?.invalid && this.contato.get(campo)?.touched);
   }
 
-  /**
-   * Aplica a máscara e valida o CPF.
-   * A função utiliza o serviço para formatar o CPF e, em seguida,
-   * remove os caracteres não numéricos para validar o CPF.
-   */
   formatCpf() {
     let cpfControl = this.contato.get('cpf');
     if (cpfControl) {
-      // Remove os caracteres não numéricos para obter apenas os dígitos
       const cpfNumerico = (cpfControl.value || '').replace(/\D/g, '');
-      // Define erros se o CPF não for válido, conforme seu serviço
       cpfControl.setErrors(
         this.cpfService.validarCpf(cpfNumerico) ? null : { invalidCpf: true }
       );
@@ -109,9 +128,9 @@ export class FormContatoComponent {
       this.cupomService.searchCupom(cupomValue).subscribe({
         next: (res) => {
           this.labelCupom = res.cupom.description;
-          this.precoService.aplicarDesconto(res.cupom.discount)
+          this.precoService.aplicarDesconto(res.cupom.discount);
           this.cupomAplicado = true;
-          this.cupomExistente = res.cupom.exists
+          this.cupomExistente = res.cupom.exists;
           this.cupom = res;
         },
         error: (err) => {
@@ -120,6 +139,4 @@ export class FormContatoComponent {
       });
     }
   }
-
-
 }

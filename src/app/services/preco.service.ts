@@ -6,7 +6,9 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class PrecoService {
   // Valor original do preço
-  private readonly initialPreco: number = 14.90;
+  private readonly defaultPreco: number = 14.90;
+
+  private initialPreco: number = this.defaultPreco;
 
   // BehaviorSubject para armazenar o preço atual
   private precoSubject: BehaviorSubject<number> = new BehaviorSubject<number>(this.initialPreco);
@@ -23,15 +25,29 @@ export class PrecoService {
     return this.precoSubject.getValue();
   }
 
+  public setPreco(novoPreco: number): void {
+    this.initialPreco = novoPreco;
+
+    this.precoSubject.next(novoPreco);
+
+    this.discountSubject.next(null);
+  }
+
+  public alterarPreco(valor: number, operacao: "soma" | "sub"): void {
+    const precoAtual = this.getPreco();
+    const novoPreco = operacao === "soma" ? precoAtual + valor : precoAtual - valor;
+    this.precoSubject.next(novoPreco);
+  }
+
   /**
    * Aplica um desconto percentual sobre o valor inicial, atualiza o preço e emite o valor do desconto.
    * @param discountPercentage Percentual de desconto (ex: 10 para 10%)
    */
   public aplicarDesconto(discountPercentage: number): void {
-    // Calcula o valor do desconto (ex: 13.90 * 0.10 = 1.39 para 10%)
-    const discountValue = this.initialPreco * (discountPercentage / 100);
+    const precoAtual = this.getPreco();
+    const discountValue = precoAtual * (discountPercentage / 100);
     // Calcula o novo preço
-    const novoPreco = this.initialPreco - discountValue;
+    const novoPreco = precoAtual - discountValue;
     // Atualiza o preço
     this.precoSubject.next(novoPreco);
     // Emite o valor do desconto aplicado
@@ -42,7 +58,8 @@ export class PrecoService {
    * Reseta o preço e remove o desconto.
    */
   public resetPreco(): void {
-    this.precoSubject.next(this.initialPreco);
+    this.initialPreco = this.defaultPreco;
+    this.precoSubject.next(this.defaultPreco);
     this.discountSubject.next(null);
   }
 }

@@ -12,7 +12,7 @@ export class PagarMeService {
 
   constructor(private http: HttpClient) {}
 
-  createOrder(user: { document: string; nome: string; email: string }, cpf: string | null, cupom?: CupomResponse): Observable<any>{
+  createOrder(user: { document: string; nome: string; email: string }, cpf: string | null, cupom?: CupomResponse, adicionais?: string[], idPedido?: string): Observable<any>{
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Accept': 'application/json'
@@ -51,7 +51,9 @@ export class PagarMeService {
         }
       ],
       closed: true,
-      ...(cupom && { cupom: cupom.cupom })
+      ...(idPedido && { idPedido: idPedido }),
+      ...(cupom && { cupom: cupom.cupom }),
+      ...(adicionais && { adicionais: adicionais })
 
     }
     return this.http.post(this.baseUrl, body, { headers });

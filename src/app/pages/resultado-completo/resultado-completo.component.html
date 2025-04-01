@@ -10,7 +10,11 @@
     [titulo]="'Relatório Completo'"
     [dados]="dadosParciais"
     [mostrarBotao]="false"
+    [resultadoCompleto]="true"
+    [comprouAdicionais]="itensJaComprados"
   />
+
+  <app-form-compra *ngIf="!carregando && preco > 0" tipoBusca="completa" [cpf]="cpf"></app-form-compra>
 
   <app-transparencia *ngIf="!carregando"/>
 </div>
