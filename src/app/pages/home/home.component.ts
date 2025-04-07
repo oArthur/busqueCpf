@@ -7,6 +7,8 @@ import {ItemComponent} from '../../components/item/item.component';
 import {InfoComponent} from '../info/info.component';
 import {ComoComprarComponent} from '../como-comprar/como-comprar.component';
 import {TransparenciaComponent} from '../../components/transparencia/transparencia.component';
+import {PacotesComponent} from '../pacotes/pacotes.component';
+import {PrecoService} from '../../services/preco.service';
 
 @Component({
   selector: 'app-home',
@@ -19,11 +21,16 @@ import {TransparenciaComponent} from '../../components/transparencia/transparenc
     ItemComponent,
     InfoComponent,
     ComoComprarComponent,
-    TransparenciaComponent
+    TransparenciaComponent,
+    PacotesComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
+
+  constructor(private precoService: PrecoService) {
+    this.precoService.resetPreco()
+  }
 
 }

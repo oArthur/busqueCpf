@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, numberAttribute, OnInit, Output} from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgClass, NgIf } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,8 +17,8 @@ import { AdicionaisService } from '../../services/adicionais.service';
     FormsModule,
     ReactiveFormsModule,
     NgClass,
-    NgIf,
-    NgxMaskDirective
+    NgxMaskDirective,
+    NgIf
   ],
   templateUrl: './form-contato.component.html',
   styleUrl: './form-contato.component.scss'
@@ -49,8 +49,12 @@ export class FormContatoComponent implements OnInit {
   cupomExistente: boolean = false;
   labelCupom!: string;
   cupom!: CupomResponse;
-  @Input() cpfBusca!: string;
 
+  @Input() cpfBusca!: string;
+  @Input ({transform: numberAttribute}) pacote!: number;
+  @Input() showCupom: boolean = true;
+
+  @Output() orderGenerated = new EventEmitter<any>();
   ngOnInit(): void {
     // Se a rota estiver configurada como /resultado-completo/:id,
     // recupera o parâmetro "id"
@@ -82,9 +86,10 @@ export class FormContatoComponent implements OnInit {
     // Se idPedido existir, significa que é uma compra de item adicional.
     // Ajuste a chamada de createOrder para receber esse parâmetro opcional, se necessário.
     this.apiPagarme.createOrder(user, this.cpfBusca, this.cupom, adicionaisParaEnviar,
-      this.idPedido || undefined).subscribe({
+      this.idPedido || undefined, this.pacote).subscribe({
       next: (response) => {
         this.carregando = false;
+        this.orderGenerated.emit(response);
         if (response && response.id) {
           console.log(`Resposta da API no form-contato: ${response}`);
           this.router.navigate(['/pagamento'], {
@@ -93,10 +98,10 @@ export class FormContatoComponent implements OnInit {
               id: response.id,
               ...(this.idPedido ? { idPrincipal: this.idPedido } : {})
             },
-            state: { pagamento: response, isAdicionais }
+            state: { pagamento: response, isAdicionais, pacote: this.pacote }
           });
-
-        } else {
+        }
+        else {
           alert("Erro ao gerar pedido. Tente novamente.");
         }
       },
@@ -123,20 +128,23 @@ export class FormContatoComponent implements OnInit {
 
   aplicarCupom() {
     const cupomControl = this.contato.get('cupom');
-    if (cupomControl && cupomControl.value) {
-      const cupomValue: string = cupomControl.value as string;
-      this.cupomService.searchCupom(cupomValue).subscribe({
-        next: (res) => {
-          this.labelCupom = res.cupom.description;
-          this.precoService.aplicarDesconto(res.cupom.discount);
-          this.cupomAplicado = true;
-          this.cupomExistente = res.cupom.exists;
-          this.cupom = res;
-        },
-        error: (err) => {
-          console.error(err);
-        }
-      });
+    if (!this.cupomExistente){
+      if (cupomControl && cupomControl.value) {
+        const cupomValue: string = cupomControl.value as string;
+        this.cupomService.searchCupom(cupomValue).subscribe({
+          next: (res) => {
+            this.labelCupom = res.cupom.description;
+            this.precoService.aplicarDesconto(res.cupom.discount, res.cupom.exists);
+            this.cupomAplicado = true;
+            this.cupomExistente = res.cupom.exists;
+            this.cupom = res;
+          },
+          error: (err) => {
+            console.error(err);
+          }
+        });
+      }
     }
+
   }
 }

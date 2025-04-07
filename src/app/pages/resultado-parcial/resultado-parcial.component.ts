@@ -6,6 +6,7 @@ import { TransparenciaComponent } from '../../components/transparencia/transpare
 import { FormContatoComponent } from '../../components/form-contato/form-contato.component';
 import { FormCompraComponent } from '../form-compra/form-compra.component';
 import { NgIf } from '@angular/common';
+import {PrecoService} from '../../services/preco.service';
 
 @Component({
   selector: 'app-resultado-parcial',
@@ -45,8 +46,9 @@ export class ResultadoParcialComponent {
     { name: "email", label: "E-Mail", chave: "emails", show: true, adicional: false, preco: 10.90 },
   ];
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private precoService: PrecoService) {
     this.carregando = true;
+    this.precoService.resetPreco()
     const navigation = this.router.getCurrentNavigation();
 
     if (navigation?.extras.state) {

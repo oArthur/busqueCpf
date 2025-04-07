@@ -45,16 +45,17 @@ export class ResultadoCompletoComponent implements OnInit, OnDestroy {
     { name: "obito", label: "Provável Óbito", chave: "obito", show: true,adicional: false },
     { name: "ocupacao", label: "Ocupação Profissional", chave: "ocupacao", show: true,adicional: false },
     { name: "renda", label: "Renda", chave: "renda", show: true,adicional: false },
-    { name: "vinculos", label: "Vínculos", chave: "vinculos", show: true, adicional: true, preco: 19.90 },
-    { name: "participacao_societaria", label: "Participação Societária", chave: "participacao_societaria", show: true, adicional: true, preco: 19.90 },
-    { name: "historico_profissional", label: "Histórico Profissional", chave: "historico_profissional", show: true, adicional: true, preco: 19.90 },
-    { name: "telefones", label: "Telefone", chave: "telefones", show: true, adicional: true, preco: 19.90 },
+    { name: "vinculos", label: "Vínculos", chave: "vinculos", show: true, adicional: true, preco: 10.90 },
+    { name: "participacao_societaria", label: "Participação Societária", chave: "participacao_societaria", show: true, adicional: true, preco: 12.90 },
+    { name: "historico_profissional", label: "Histórico Profissional", chave: "historico_profissional", show: true, adicional: true, preco: 10.90 },
+    { name: "telefones", label: "Telefone", chave: "telefones", show: true, adicional: true, preco: 15.90 },
     { name: "emails", label: "E-Mail", chave: "emails", show: false, adicional: false },
-    { name: "enderecos", label: "Endereço", chave: "enderecos", show: true, adicional: true, preco: 25.30 }
+    { name: "enderecos", label: "Endereço", chave: "enderecos", show: true, adicional: true, preco: 12.90 }
   ];
 
   ngOnInit() {
     this.carregando = true
+    this.precoService.resetPreco()
     this.precoSubscription = this.precoService.preco$.subscribe(value => {
       this.preco = value;
     });
