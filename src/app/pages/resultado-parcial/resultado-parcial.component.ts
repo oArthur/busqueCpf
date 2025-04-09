@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {AfterViewInit, Component, Renderer2} from '@angular/core';
 import { Router } from '@angular/router';
 import { FormResultadoComponent } from '../../components/form-resultado/form-resultado.component';
 import { ComoComprarComponent } from '../como-comprar/como-comprar.component';
@@ -7,6 +7,7 @@ import { FormContatoComponent } from '../../components/form-contato/form-contato
 import { FormCompraComponent } from '../form-compra/form-compra.component';
 import { NgIf } from '@angular/common';
 import {PrecoService} from '../../services/preco.service';
+import {data} from 'autoprefixer';
 
 @Component({
   selector: 'app-resultado-parcial',
@@ -22,7 +23,7 @@ import {PrecoService} from '../../services/preco.service';
   ],
   styleUrl: './resultado-parcial.component.scss'
 })
-export class ResultadoParcialComponent {
+export class ResultadoParcialComponent implements AfterViewInit{
 
   cpf: string | null = null;
   dadosParciais: { name: string, label: string, valor: string, show: boolean, adicional: boolean, preco?: number }[] = [];
@@ -46,7 +47,7 @@ export class ResultadoParcialComponent {
     { name: "email", label: "E-Mail", chave: "emails", show: true, adicional: false, preco: 10.90 },
   ];
 
-  constructor(private router: Router, private precoService: PrecoService) {
+  constructor(private router: Router, private precoService: PrecoService, private renderer: Renderer2) {
     this.carregando = true;
     this.precoService.resetPreco()
     const navigation = this.router.getCurrentNavigation();
@@ -109,5 +110,15 @@ export class ResultadoParcialComponent {
       return `${partes[2]}/${"*".repeat(partes[1].length)}/${"*".repeat(partes[0].length)}`;
     }
     return "N/A";
+  }
+
+  injetarScriptConversao(): void {
+    const script = this.renderer.createElement('script');
+    script.text = `gtag('event', 'conversion', {'send_to': 'AW-16888294718/SqpiCKiHh7YaEL7a-_Q-'});`;
+    this.renderer.appendChild(document.body, script);
+  }
+
+  ngAfterViewInit(): void {
+    this.injetarScriptConversao()
   }
 }

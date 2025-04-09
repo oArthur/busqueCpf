@@ -11,8 +11,6 @@ export class PagarMeService {
 
   constructor(private http: HttpClient) {}
 
-  // TODO parei aqui, quando gerar o pagamento e o mesmo pagar preciso redirecionar o usuario para uma pagina onde mostre o cupom que foi gerado para ele.
-
   createOrder(
     user: { document: string; nome: string; email: string },
     cpf: string | null,

@@ -38,7 +38,7 @@ export class FormResultadoComponent implements OnInit {
   constructor(private precoService: PrecoService,private adicionaisService: AdicionaisService) {}
 
   ngOnInit() {
-    console.log(this.dados);
+    // console.log(this.dados);
     this.precoSubscription = this.precoService.preco$.subscribe(value => {
       this.preco = value;
     });
