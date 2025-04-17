@@ -17,21 +17,21 @@ import {NgForOf} from '@angular/common';
 export class InfoComponent {
 
   items = [
-    { name: 'Nome Completo', cor: "#3498db" },
-    { name: 'Data de Nascimento', cor: "#3498db" },
-    { name: 'Gênero', cor: "#3498db" },
-    { name: 'Nome da Mãe', cor: "#28A745" },
-    { name: 'Provável Óbito', cor: "#28A745" },
-    { name: 'Situação do CPF', cor: "#28A745" },
-    { name: 'Ocupação Profissional', cor: "#28A745" },
-    { name: 'Faixa Salarial', cor: "#28A745" },
-    { name: 'Renda', cor: "#28A745" },
-    { name: 'E-mails', cor: "#28A745" },
-    { name: 'Celulares*', cor: "#DC3545" },
-    { name: 'Telefones*', cor: "#DC3545" },
-    { name: 'Endereços*', cor: "#DC3545" },
-    { name: 'Parentes e Vínculos*', cor: "#DC3545" },
-    { name: 'Participação em CNPJS*', cor: "#DC3545" },
+    { name: 'Nome Completo', cor: "#E5E6FB" },
+    { name: 'Data de Nascimento', cor: "#E5E6FB" },
+    { name: 'Gênero', cor: "#E5E6FB" },
+    { name: 'Nome da Mãe', cor: "#E5E6FB" },
+    { name: 'Provável Óbito', cor: "#E5E6FB" },
+    { name: 'Situação do CPF', cor: "#E5E6FB" },
+    { name: 'Ocupação Profissional', cor: "#E5E6FB" },
+    { name: 'Faixa Salarial', cor: "#E5E6FB" },
+    { name: 'Renda', cor: "#E5E6FB" },
+    { name: 'E-mails', cor: "#E5E6FB" },
+    { name: 'Celulares*', cor: "#E5E6FB" },
+    { name: 'Telefones*', cor: "#E5E6FB" },
+    { name: 'Endereços*', cor: "#E5E6FB" },
+    { name: 'Parentes e Vínculos*', cor: "#E5E6FB" },
+    { name: 'Participação em CNPJS*', cor: "#E5E6FB" },
   ]
 
 }
