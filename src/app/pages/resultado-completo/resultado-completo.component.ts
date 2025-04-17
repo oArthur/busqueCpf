@@ -81,6 +81,25 @@ export class ResultadoCompletoComponent implements OnInit, OnDestroy {
       // Se não há CPF, exibe um erro
       alert("Nenhum CPF fornecido para consulta.");
     }
+
+    const scriptId = 'google-ads-script';
+
+    if (!document.getElementById(scriptId)) {
+      const gtagScript = document.createElement('script');
+      gtagScript.async = true;
+      gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-16888294718';
+      gtagScript.id = scriptId;
+      document.head.appendChild(gtagScript);
+
+      const inlineScript = document.createElement('script');
+      inlineScript.text = `
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-16888294718');
+  `;
+      document.head.appendChild(inlineScript);
+    }
   }
 
   montarDados(dados: any) {
