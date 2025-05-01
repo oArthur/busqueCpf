@@ -117,30 +117,38 @@ export class ResultadoCompletoComponent implements OnInit, OnDestroy {
     this.carregando = true;
 
     this.bdPedidosService.verificarStatusPedido(this.id, this.cpf).subscribe({
-      next: (result: any) => {
-        // Garante que result seja um array de strings; se não, atribui um array vazio.
-        this.itensJaComprados = Array.isArray(result) ? result : [];
-        console.log(this.itensJaComprados)
+      next: (result: string[]) => {
+        // Se não há itens, significa pedido não validado
+        if (!Array.isArray(result) || result.length === 0) {
+          this.carregando = false;
+          alert("Pedido não validado ou pagamento não aprovado.");
+          this.router.navigate(['/']);
+          return;  // interrompe o fluxo
+        }
 
-        // Continua com o fluxo
+        // Só continua aqui se result tiver ao menos um item
+        this.itensJaComprados = result;
+        console.log(this.itensJaComprados);
+
         this.precoService.setPreco(0);
-        this.cpfApiService.buscarCpf(this.cpf, true, this.itensJaComprados).subscribe({
-          next: (response) => {
-            this.carregando = false;
-            if (response) {
-              const dadosObj = Array.isArray(response) && response.length > 0 ? response[0] : {};
-              this.montarDados(dadosObj);
-            } else {
-              alert("CPF não encontrado ou bloqueado.");
+        this.cpfApiService.buscarCpf(this.cpf, true, this.itensJaComprados)
+          .subscribe({
+            next: (response: any[]) => {
+              this.carregando = false;
+              if (response && response.length > 0) {
+                const dadosObj = response[0];
+                this.montarDados(dadosObj);
+              } else {
+                alert("CPF não encontrado ou bloqueado.");
+                this.router.navigate(['/']);
+              }
+            },
+            error: () => {
+              this.carregando = false;
+              alert("Erro ao buscar CPF. Tente novamente mais tarde.");
               this.router.navigate(['/']);
             }
-          },
-          error: () => {
-            this.carregando = false;
-            alert("Erro ao buscar CPF. Tente novamente mais tarde.");
-            this.router.navigate(['/']);
-          }
-        });
+          });
       },
       error: () => {
         this.carregando = false;
@@ -148,6 +156,7 @@ export class ResultadoCompletoComponent implements OnInit, OnDestroy {
         this.router.navigate(['/']);
       }
     });
+
 
 
   }
