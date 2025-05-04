@@ -1,5 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CurrencyPipe, DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import {
+  CurrencyPipe,
+  DatePipe,
+  KeyValuePipe,
+  NgClass,
+  NgForOf,
+  NgIf,
+  NgSwitch,
+  NgSwitchCase,
+  NgSwitchDefault, TitleCasePipe
+} from '@angular/common';
 import { CpfFormatPipe } from '../../pipes/cpf-format.pipe';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { PrecoService } from '../../services/preco.service';
@@ -10,7 +20,7 @@ import {NgxMaskPipe} from 'ngx-mask';
 @Component({
   selector: 'app-form-resultado',
   standalone: true,
-  imports: [NgForOf, NgIf, CurrencyPipe, CpfFormatPipe, DatePipe, DateFormatPipe, NgClass, NgxMaskPipe],
+  imports: [NgForOf, NgIf, CurrencyPipe, CpfFormatPipe, DatePipe, DateFormatPipe, NgClass, NgxMaskPipe, NgSwitch, NgSwitchCase, NgSwitchDefault, KeyValuePipe, TitleCasePipe],
   templateUrl: './form-resultado.component.html',
   styleUrls: ['./form-resultado.component.scss']
 })
@@ -31,6 +41,7 @@ export class FormResultadoComponent implements OnInit {
   historicoProfissional: any[] = [];
   emails: string[] = [];
   enderecos: any[] = [];
+  signos: any[] = [];
   vinculos: any[] = [];
   preco!: number;
   private precoSubscription!: Subscription;
@@ -86,8 +97,35 @@ export class FormResultadoComponent implements OnInit {
     if (vinculoItem && Array.isArray(vinculoItem.valor)) {
       this.vinculos = vinculoItem.valor;
     }
+    const signosItem = this.dados.find(item => item.name === 'signos');
+    if (signosItem && signosItem.valor && typeof signosItem.valor === 'object') {
+      this.signos = Object.entries(signosItem.valor).map(([key, value]) => ({
+        nome: this.getRotuloSigno(key),
+        valor: value
+      }));
+    }
   }
 
+  readonly rotulosSignos: { [key: string]: string } = {
+    zodiaco: 'Zodíaco',
+    zodiaco_elemento: 'Elemento do Zodíaco',
+    zodiaco_regente: 'Regente do Zodíaco',
+    chines: 'Chinês',
+    chines_elemento: 'Elemento Chinês',
+    maia: 'Maia',
+    egipcio: 'Egípcio',
+    celta: 'Celta',
+    vedico: 'Védico',
+    xamanico: 'Xamânico'
+  };
+
+  getRotuloSigno(chave: string): string {
+    return this.rotulosSignos[chave] || this.capitalize(chave.replace(/_/g, ' '));
+  }
+
+  private capitalize(texto: string): string {
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
 
   getRecordCount(item: any): number {
     const valor = item?.valor;
@@ -132,7 +170,6 @@ export class FormResultadoComponent implements OnInit {
       }
     }
   }
-
 
   scrollParaCompra() {
     const elemento = document.getElementById('compra');
