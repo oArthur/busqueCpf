@@ -6,11 +6,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#05072E',
+        primary: '#2563eb',
+        primaryLight: '#e0f2fe',
+        primaryDark: '#1d4ed8',
+        light: "#64748b",
         card: '#e7e7e7',
-        primaryContrast: '#0e137e'},
+        secondary: '#1e3a8a',
+        textPrimary: '#1a202c',
+        primaryContrast: '#0e137e',
+        title: '#2563eb'},
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
       },
     },
   },

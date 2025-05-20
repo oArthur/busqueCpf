@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import {
   CurrencyPipe,
-  DatePipe,
+  DatePipe, JsonPipe,
   KeyValuePipe,
   NgClass,
   NgForOf,
@@ -16,11 +16,12 @@ import { PrecoService } from '../../services/preco.service';
 import { Subscription } from 'rxjs';
 import {AdicionaisService} from '../../services/adicionais.service';
 import {NgxMaskPipe} from 'ngx-mask';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-form-resultado',
   standalone: true,
-  imports: [NgForOf, NgIf, CurrencyPipe, CpfFormatPipe, DatePipe, DateFormatPipe, NgClass, NgxMaskPipe, NgSwitch, NgSwitchCase, NgSwitchDefault, KeyValuePipe, TitleCasePipe],
+  imports: [NgForOf, NgIf, CurrencyPipe, CpfFormatPipe, DatePipe, DateFormatPipe, NgClass, NgxMaskPipe, NgSwitch, NgSwitchCase, NgSwitchDefault, KeyValuePipe, TitleCasePipe, MatIcon, JsonPipe],
   templateUrl: './form-resultado.component.html',
   styleUrls: ['./form-resultado.component.scss']
 })
@@ -54,6 +55,7 @@ export class FormResultadoComponent implements OnInit {
       this.preco = value;
     });
 
+
     // Normaliza os dados e adiciona a propriedade "selected" para itens adicionais
     this.dados = this.dados.map(item => ({
       ...item,
@@ -86,6 +88,7 @@ export class FormResultadoComponent implements OnInit {
     if (emailItem && Array.isArray(emailItem.valor)) {
       this.emails = emailItem.valor;
     }
+    console.log(this.emails)
 
     // Endereços
     const enderecoItem = this.dados.find(item => item.name === 'enderecos');
@@ -118,6 +121,9 @@ export class FormResultadoComponent implements OnInit {
     vedico: 'Védico',
     xamanico: 'Xamânico'
   };
+
+  beneficios = ['Dados completos sem censura', 'Endereços atualizados', 'Telefones e e-mails válidos',
+    'Histórico de endereços', 'Vínculos familiares', 'Dados profissionais']
 
   getRotuloSigno(chave: string): string {
     return this.rotulosSignos[chave] || this.capitalize(chave.replace(/_/g, ' '));

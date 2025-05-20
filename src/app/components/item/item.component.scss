@@ -1,0 +1,23 @@
+.info-card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1a202c;                   // textPrimary
+  border-left: 4px solid #1d4ed8;   // default blue-700
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.info-card.extra {
+  background-color: #e0f2fe;        // azul claro para extras
+  color: #1e40af;                   // texto azul-800
+  border-left-color: #2563eb;       // azul-600 para extras
+}

@@ -20,50 +20,47 @@ export class PacotesComponent {
 
   content: any = [{
     id: 51,
-    title: 'Pacote 25 Buscas',
+    title: 'Plano Start 10',
     isMostPopular: false,
-    price: 299,
-    value: 25,
-    subtitle: "",
+    price: 149,
+    value: 10,
+    subtitle: "10 consultas de CPF",
     buttonLabel: 'Comprar agora',
     description: [
-      '25 buscas de CPF completas inclusas',
-      'Menos de R$ 10 por consulta',
+      'Apenas R$ 14,90 por consulta',
       'Validade de 90 dias',
-      'Suporte prioritário via email',
-      'Relatórios detalhados com status do CPF'
+      'Relatórios detalhados',
+      'Suporte por e-mail'
     ]
   },
     {
       id: 52,
-      title: 'Pacote 50 Buscas',
-      isMostPopular: true,
-      price: 399,
-      value: 50,
-      subtitle: "",
+      title: 'Plano Flex 15',
+      isMostPopular: false,
+      price: 199,
+      value: 15,
+      subtitle: "15 consultas de CPF",
       buttonLabel: 'Comprar agora',
       description: [
-        '50 buscas de CPF inclusas',
-        'Menos de R$ 8 por consulta',
+        'Apenas R$ 14,27 por consulta',
         'Validade de 90 dias',
-        'Suporte prioritário via email',
-        'Relatórios detalhados com status do CPF'
+        'Relatórios detalhados',
+        'Suporte por e-mail'
       ]
     },
     {
       id: 53,
-      title: 'Pacote 100 Buscas',
-      isMostPopular: false,
-      price: 499,
+      title: 'Plano Pro 30',
+      isMostPopular: true,
+      price: 259,
       value: 100,
-      subtitle: "",
+      subtitle: "30 consultas de CPF",
       buttonLabel: 'Comprar agora',
       description: [
-        '100 buscas de CPF inclusas',
-        'Menos de R$ 5 por consulta',
+        'Apenas R$ 8,63 por consulta',
         'Validade de 90 dias',
-        'Suporte prioritário via email',
-        'Relatórios detalhados com status do CPF'
+        'Relatórios detalhados',
+        'Suporte prioritário'
       ]
     }]
 

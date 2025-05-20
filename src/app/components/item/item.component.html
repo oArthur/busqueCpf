@@ -1,8 +1,9 @@
 <div
-  [ngStyle]="{'background-color': cor}"
-  class="p-4 rounded-lg cursor-pointer py-3 px-5 w-full text-center text-black font-bold text-sm transition-transform duration-300 transform hover:scale-110"
-  (click)="abrirModal()">
-  {{ nome.toUpperCase() }}
+  class="info-card"
+  [class.extra]="nome.endsWith('*')"
+  (click)="abrirModal()"
+>
+  {{ nome.replace('*','') }}
 </div>
 
 <!-- Modal -->

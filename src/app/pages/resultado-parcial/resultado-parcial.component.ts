@@ -8,46 +8,51 @@ import { FormCompraComponent } from '../form-compra/form-compra.component';
 import { NgIf } from '@angular/common';
 import {PrecoService} from '../../services/preco.service';
 import {data} from 'autoprefixer';
+import {CpfFormatPipe} from '../../pipes/cpf-format.pipe';
 
 @Component({
   selector: 'app-resultado-parcial',
   standalone: true,
   templateUrl: './resultado-parcial.component.html',
+  styleUrls: ['./resultado-parcial.component.scss'],
   imports: [
     FormResultadoComponent,
     ComoComprarComponent,
     TransparenciaComponent,
     FormContatoComponent,
     FormCompraComponent,
-    NgIf
-  ],
-  styleUrl: './resultado-parcial.component.scss'
+    NgIf,
+    CpfFormatPipe
+  ]
 })
 export class ResultadoParcialComponent implements AfterViewInit{
 
   cpf: string | null = null;
-  dadosParciais: { name: string, label: string, valor: string, show: boolean, adicional: boolean, preco?: number }[] = [];
+  dadosParciais: { icon:string, name: string, label: string, valor: string, show: boolean, adicional: boolean, preco?: number }[] = [];
   carregando: boolean = false;
 
   // Labels fixas que sempre aparecem na tela
-  labelsFixas: { name: string, label: string, chave: string, show: boolean, adicional: boolean, preco?: number }[] = [
-    { name: "nome", label: "Nome Completo", chave: "nome", show: true, adicional: false },
-    { name: "genero", label: "Gênero", chave: "sexo", show: true, adicional: false },
-    { name: "dta_nascimento", label: "Data de Nascimento", chave: "data_nascimento", show: true, adicional: false },
-    { name: "nome_mae", label: "Nome da Mãe", chave: "nome_mae", show: true, adicional: false },
-    { name: "cpf", label: "CPF", chave: "cpf", show: true, adicional: false },
-    { name: "situcao_cpf", label: "Situação do CPF", chave: "situacao_cpf", show: true, adicional: false },
-    { name: "obito", label: "Provável Óbito", chave: "obito", show: true, adicional: false },
-    { name: "ocupacao", label: "Ocupação Profissional", chave: "ocupacao", show: true, adicional: false },
-    { name: "renda", label: "Renda", chave: "renda", show: true, adicional: false },
-    { name: "vinculos", label: "Vínculos", chave: "vinculos", show: true, adicional: true, preco: 10.90 },
-    { name: "participacao_societaria", label: "Participação Societária", chave: "participacao_societaria", show: true, adicional: true, preco: 10.90 },
-    { name: "historico_profissional", label: "Histórico Profissional", chave: "historico_profissional", show: true, adicional: true, preco: 10.90 },
-    { name: "telefone", label: "Telefone", chave: "telefones", show: true, adicional: true, preco: 15.90 },
-    { name: "email", label: "E-Mail", chave: "emails", show: true, adicional: false, preco: 10.90 },
+  labelsFixas: { icon: string, name: string, label: string, chave: string, show: boolean, adicional: boolean, preco?: number }[] = [
+    { icon:"person", name: "nome", label: "Nome Completo", chave: "nome", show: true, adicional: false },
+    { icon:"cake", name: "dta_nascimento", label: "Data de Nascimento", chave: "data_nascimento", show: true, adicional: false },
+    { icon:"badge", name: "cpf", label: "CPF", chave: "cpf", show: true, adicional: false },
+    { icon:"wc", name: "genero", label: "Gênero", chave: "sexo", show: true, adicional: false },
+    { icon:"favorite", name: "estado_civil", label: "Estado Civil", chave: "estado_civil", show: true, adicional: false },
+    { icon:"group", name: "nome_mae", label: "Nome da Mãe", chave: "nome_mae", show: true, adicional: false },
+    { icon:"request_quote", name: "situcao_cpf", label: "Situação do CPF", chave: "situacao_cpf", show: true, adicional: false },
+    { icon:"church", name: "obito", label: "Provável Óbito", chave: "obito", show: true, adicional: false },
+    { icon:"business_center", name: "ocupacao", label: "Ocupação Profissional", chave: "ocupacao", show: true, adicional: false },
+    { icon:"payments", name: "renda", label: "Renda", chave: "renda", show: true, adicional: false },
+    { icon:"stars", name: "signos", label: "Signos", chave: "signos", show: false,adicional: false },
+    { icon:"mail", name: "email", label: "E-Mail", chave: "emails", show: true, adicional: false},
+    { icon:"diversity_1", name: "vinculos", label: "Vínculos", chave: "vinculos", show: true, adicional: true, preco: 10.90 },
+    { icon:"apartment", name: "participacao_societaria", label: "Participação Societária", chave: "participacao_societaria", show: true, adicional: true, preco: 10.90 },
+    { icon:"history", name: "historico_profissional", label: "Histórico Profissional", chave: "historico_profissional", show: true, adicional: true, preco: 10.90 },
+    { icon:"phone", name: "telefone", label: "Telefone", chave: "telefones", show: true, adicional: true, preco: 15.90 },
   ];
 
-  constructor(private router: Router, private precoService: PrecoService, private renderer: Renderer2) {
+  constructor(private router: Router, private precoService: PrecoService, private renderer: Renderer2,
+              private cpfPipe: CpfFormatPipe) {
     this.carregando = true;
     this.precoService.resetPreco()
     const navigation = this.router.getCurrentNavigation();
@@ -66,7 +71,8 @@ export class ResultadoParcialComponent implements AfterViewInit{
         show: item.show,
         name: item.name,
         adicional: item.adicional,
-        preco: item.preco
+        preco: item.preco,
+        icon: item.icon
       }));
       this.carregando = false;
     } else {
@@ -78,7 +84,7 @@ export class ResultadoParcialComponent implements AfterViewInit{
    * Formata os valores para garantir legibilidade
    */
   formatarValor(chave: string, valor: any): string {
-    if (!valor) return "Verificado ✅"; // Caso o valor seja nulo ou indefinido
+    if (!valor) return ""; // Caso o valor seja nulo ou indefinido
 
     // Para o nome, exibe o primeiro nome e substitui o restante por asteriscos fixos
     if (chave === "nome") {
@@ -96,6 +102,9 @@ export class ResultadoParcialComponent implements AfterViewInit{
     // Para a data de nascimento, exibe apenas o dia e oculta mês e ano
     if (chave === "data_nascimento") {
       return this.formatarDataOcultada(valor.toString());
+    }
+    if (chave === "cpf"){
+      return this.cpfPipe.transform(valor)
     }
 
     return valor.toString(); // Retorna como string para os demais casos

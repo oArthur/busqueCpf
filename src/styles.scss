@@ -41,10 +41,9 @@ $consultaCpf-theme: mat.define-theme((
 
 
 * {
-  border: none;
   margin: 0;
   padding: 0;
 }
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Poppins, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: Poppins, "Helvetica Neue", sans-serif; background-color: #f7f9fc }

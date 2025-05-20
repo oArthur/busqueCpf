@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {NgStyle} from '@angular/common';
+import {NgClass, NgStyle} from '@angular/common';
 import {ModalComponent} from '../modal/modal.component';
 import {InputSearchComponent} from '../input-search/input-search.component';
 
@@ -7,7 +7,7 @@ import {InputSearchComponent} from '../input-search/input-search.component';
   selector: 'app-item',
   standalone: true,
   imports: [
-    NgStyle, ModalComponent, InputSearchComponent
+    NgStyle, ModalComponent, InputSearchComponent, NgClass
   ],
   templateUrl: './item.component.html',
   styleUrl: './item.component.scss'
