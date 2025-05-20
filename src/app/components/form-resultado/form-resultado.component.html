@@ -1,280 +1,318 @@
 <div class="bg-white shadow-lg rounded-xl p-6 max-w-3xl mx-auto">
-  <!-- Cabeçalho -->
-  <div class="bg-blue-900 text-white font-bold text-lg text-center flex items-center p-4 rounded-md">
-    <span class="text-xl">🔍</span>
-    <span class="ml-3">{{ titulo }}</span>
+
+  <!-- Header com ícone e título -->
+  <div class="flex items-center justify-center text-title primary font-bold text-2xl p-4">
+    <mat-icon>shield</mat-icon>
+    <span class="ml-3 font-bold">Relatório Verificado</span>
   </div>
 
-  <!-- Lista de itens "básicos" + adicionais (somente para parcial/completo) -->
-  <div class="mt-6 space-y-4">
-    <ng-container *ngFor="let item of dados">
-      <div
-        *ngIf="item.show && ( !item.adicional || !comprouAdicionais.includes(item.name) )"
-        class="p-4 rounded-lg shadow-sm flex justify-between items-center">
-        <!-- Conteúdo do item -->
-        <div>
-          <span class="font-semibold text-gray-700">{{ item.label }}: </span>
+  <div class="flex items-center justify-center text-black primary font-bold text-3xl p-4">
+    <span class="font-semibold text-center">Relatório Completo de Dados Pessoais</span>
+  </div>
 
-          <!-- Se for resultado parcial e item adicional, mostra somente "Adquira no resultado completo." -->
-          <ng-container *ngIf="!resultadoCompleto && item.adicional; else resultadoCompletoTemplate">
-          <span class="text-gray-600 font-medium ml-2">
-            Adquira no resultado completo.
-          </span>
+  <div *ngIf="!resultadoCompleto;" class="mt-6 text-center">
+    <button
+      (click)="scrollParaCompra()"
+      class="inline-flex items-center gap-2 bg-gradient-to-br from-primary to-primaryContrast
+             text-white font-semibold py-3 px-6 rounded-full shadow hover:from-primaryContrast hover:to-primary
+             transition-transform transform hover:-translate-y-0.5">
+      <mat-icon>lock_open</mat-icon>
+      Desbloquear Relatório Completo
+    </button>
+  </div>
+
+  <div
+    class=" mt-8 flex flex-col sm:flex-row items-center justify-center gap-2 bg-primaryLight text-primaryDark
+     font-semibold text-base sm:text-lg p-3 sm:p-4 rounded-lg border-l-2 sm:border-l-4 border-primary">
+    <mat-icon class="text-xl sm:text-2xl">description</mat-icon>
+    <span class="text-center">{{ titulo }}
+  </span>
+  </div>
+
+  <div class="mt-6 bg-white rounded-lg shadow overflow-hidden">
+    <ng-container *ngFor="let item of dados">
+
+      <div *ngIf="!resultadoCompleto && !item.adicional"
+           class="flex flex-col sm:flex-row sm:justify-between sm:items-center px-4
+         sm:px-6 py-5 border-b last:border-b-0 hover:bg-gray-50 transition-colors">
+
+        <div class="flex items-center gap-2 text-textPrimary text-sm font-medium">
+          <mat-icon class="text-primary">{{ item.icon }}</mat-icon>
+          <span class="text-light font-medium">{{ item.label }}</span>
+        </div>
+
+        <!-- valor / badge ou verificado -->
+        <div class="flex items-center gap-2">
+          <!-- Quando existe valor -->
+          <ng-container *ngIf="item.valor; else semValorTpl">
+            <span class="text-textPrimary text-sm font-semibold">{{ item.valor }}</span>
+            <span (click)="scrollParaCompra()"
+              class="inline-flex items-center gap-1 py-1 px-2 rounded-full text-xs font-semibold
+                   bg-primaryLight text-primary hover:bg-primaryDark hover:text-white transition-colors cursor-pointer">
+            <mat-icon>lock</mat-icon>Completo no relatório</span>
           </ng-container>
 
-
-          <!-- Bloco para resultado completo -->
-          <ng-template #resultadoCompletoTemplate>
-            <!-- Para itens não adicionais, mostra o valor normalmente -->
-            <ng-container *ngIf="!item.adicional">
-              <span class="text-gray-900 font-medium">
-                {{ item.valor === false ? 'Não' :
-                    (item.valor && item.valor !== '{}' ?
-                      (item.name === 'cpf' ? (item.valor | cpfFormat) :
-                        item.name === 'dta_nascimento' ? (item.valor | dateFormat) :
-                          item.name === 'renda' ? (item.valor === 'Verificado ✅' ? item.valor : (item.valor | currency:'BRL':'symbol':
-                              '1.2-2':'pt-BR')) :
-                            item.valor) : 'Não informado') }}
-              </span>
-            </ng-container>
-            <!-- Para itens adicionais, mostra o texto processado -->
-            <ng-container *ngIf="item.adicional">
-            <span class="text-gray-900 font-medium">
-              {{ item.valor }}
-            </span>
-            </ng-container>
+          <ng-template #semValorTpl>
+          <span (click)="scrollParaCompra()" class="inline-flex items-center mt-2 lg:mt-0 gap-2 text-green-600 font-semibold text-sm cursor-pointer">
+            <mat-icon>check_circle</mat-icon>
+            Verificado
+          </span>
           </ng-template>
         </div>
-        <!-- Botão de ação para itens adicionais, só se for resultado completo e houver registro -->
-        <div *ngIf="resultadoCompleto && item.adicional">
-          <ng-container *ngIf="item.valor !== 'Sem registro'">
-            <ng-container *ngIf="comprouAdicionais.includes(item.name); else naoComprado">
-              <span class="text-green-600 font-medium">Já adquirido</span>
-            </ng-container>
-            <ng-template #naoComprado>
-              <button (click)="toggleSelect(item)"
-                      [ngClass]="{'bg-primaryContrast': !item.selected, 'bg-red-500': item.selected}"
-                      class="px-3 py-2 rounded-md focus:outline-none text-white ml-2">
-                {{ item.selected ? 'Remover' : 'Adicionar por ' + (item.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR') }}
+      </div>
+
+      <ng-container *ngIf="resultadoCompleto && !item.adicional && item.show">
+        <div class="mt-6 bg-white rounded-lg shadow overflow-hidden">
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center
+              px-4 sm:px-6 py-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors">
+            <!-- LABEL + ÍCONE (sempre exibidos) -->
+            <div class="flex items-center gap-2 text-textPrimary text-sm font-medium">
+              <mat-icon class="text-primary">{{ item.icon }}</mat-icon>
+              <span>{{ item.label }}</span>
+            </div>
+
+            <!-- VALOR / BADGES -->
+            <div class="mt-2 sm:mt-0 flex flex-wrap items-center gap-2">
+              <!-- === PARCIAL === -->
+              <ng-container *ngIf="!resultadoCompleto; else completoTpl">
+                <!-- só itens não-adicionais -->
+                <ng-container *ngIf="!item.adicional">
+                  <!-- se tiver valor, mostra e a badge “Completo no relatório” -->
+                  <ng-container *ngIf="item.valor; else verificadoTpl">
+                    <span class="text-textPrimary font-semibold">{{ item.valor }}</span>
+                    <span
+                      class="inline-flex items-center gap-1 py-1 px-2 bg-primaryLight text-primary
+                     rounded-full text-xs font-semibold">
+                      <mat-icon class="text-xs">lock</mat-icon>
+                      Completo no relatório</span>
+                  </ng-container>
+                  <ng-template #verificadoTpl>
+            <span class="inline-flex items-center gap-1 text-green-600 font-semibold text-sm">
+              <mat-icon class="text-xs">check_circle</mat-icon>Verificado</span>
+                  </ng-template>
+                </ng-container>
+              </ng-container>
+
+              <!-- === COMPLETO === -->
+
+              <ng-template #completoTpl>
+                <span class="text-textPrimary font-semibold">{{ item.valor || 'Sem Registro' }}</span>
+
+                <!-- botões só para adicionais -->
+                <ng-container *ngIf="item.adicional">
+                  <button
+                    (click)="toggleSelect(item)"
+                    [ngClass]="item.selected
+              ? 'bg-red-500 text-white'
+              : 'bg-primaryLight text-secondary hover:bg-primaryDark hover:text-white'"
+                    class="inline-flex items-center gap-1 py-1 px-2 rounded-full text-xs font-semibold"
+                  >
+                    <mat-icon class="text-xs">lock</mat-icon>
+                    {{
+                      item.selected
+                        ? 'Remover'
+                        : 'Adicionar por ' + (item.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR')
+                    }}
+                  </button>
+                </ng-container>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+    </ng-container>
+
+    <!-- Adicionais -->
+    <ng-container *ngIf="resultadoCompleto">
+      <div *ngFor="let item of dados" [hidden]="!item.adicional">
+        <div class="mt-6">
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center
+              px-4 sm:px-6 py-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors">
+            <div class="flex items-center gap-2 text-textPrimary text-sm font-medium">
+              <mat-icon class="text-primary">{{ item.icon }}</mat-icon>
+              <span>{{ item.label }}</span>
+            </div>
+
+            <span *ngIf="podeExibirBotao(item) || item.valor == 'Sem registro'" class="text-textPrimary text-xs font-semibold">{{ item.valor }}</span>
+
+            <!-- Botão de ação -->
+            <ng-container *ngIf="podeExibirBotao(item)">
+              <button
+                (click)="toggleSelect(item)"
+                [ngClass]="item.selected
+              ? 'bg-red-500 text-white'
+              : 'bg-primaryLight text-secondary hover:bg-primaryDark hover:text-white'"
+                class="inline-flex items-center gap-1 py-1 px-2 rounded-full text-xs font-semibold transition-colors">
+                <mat-icon class="text-xs">lock</mat-icon>
+                {{
+                  item.selected
+                    ? 'Remover'
+                    : 'Adicionar por ' + (item.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR')
+                }}
               </button>
-            </ng-template>
-          </ng-container>
+            </ng-container>
+          </div>
+
+          <!-- Conteúdo formatado -->
+          <div class="space-y-3">
+            <!-- Telefones -->
+            <ng-container *ngIf="item.name === 'telefones'">
+              <div class="space-y-3 px-4 pb-4">
+                <div *ngFor="let telefone of telefones"
+                     class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-700 text-[0.95rem] font-medium text-textPrimary
+                      transition-transform duration-200 ease-in-out hover:-translate-y-1 hover:shadow-lg cursor-pointer uppercase">
+                  <div><b>DDD:</b> {{ telefone.ddd }}</div>
+                  <div><b>NÚMERO:</b> {{ telefone.numero }}</div>
+                  <div><b>WHATSAPP:</b> {{ telefone.whatsapp ? 'SIM' : 'NÃO' }}</div>
+                  <div><b>TIPO:</b> {{ telefone.tipo }}</div>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- Participação Societária -->
+            <ng-container *ngIf="item.name === 'participacao_societaria'">
+              <div class="space-y-3 px-4 pb-4">
+                <div *ngFor="let part of participacaoSocietaria"
+                     class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-700 text-[0.95rem] font-medium text-textPrimary
+                      transition-transform duration-200 ease-in-out hover:-translate-y-1 hover:shadow-lg cursor-pointer uppercase">
+                  <div><b>CARGO:</b> {{ part.cargo }}</div>
+                  <div><b>CNPJ:</b> {{ part.cnpj | mask:'00.000.000/0000-00' }}</div>
+                  <div><b>DATA ENTRADA:</b> {{ part.data_entrada }}</div>
+                  <div><b>RAZÃO SOCIAL:</b> {{ part.razao_social }}</div>
+                  <div><b>SITUAÇÃO:</b> {{ part.situacao_cadastral }}</div>
+                </div>
+              </div>
+
+            </ng-container>
+
+            <!-- Histórico Profissional -->
+            <ng-container *ngIf="item.name === 'historico_profissional'">
+              <div class="space-y-3 px-4 pb-4">
+                <div *ngFor="let hist of historicoProfissional"
+                     class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-700 text-[0.95rem] font-medium text-textPrimary
+                      transition-transform duration-200 ease-in-out hover:-translate-y-1 hover:shadow-lg cursor-pointer uppercase">
+                  <div><b>CNPJ:</b> {{ hist.cnpj }}</div>
+                  <div><b>RAZÃO SOCIAL:</b> {{ hist.razao_social }}</div>
+                  <div><b>SETOR:</b> {{ hist.setor }}</div>
+                  <div><b>CARGO:</b> {{ hist.cbo_descricao }}</div>
+                  <div><b>FAIXA SALARIAL:</b> {{ hist.faixa_salarial }}</div>
+                  <div><b>RENDA ESTIMADA:</b> {{ hist.renda_estimada | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
+                </div>
+              </div>
+
+            </ng-container>
+
+            <!-- Endereços -->
+            <ng-container *ngIf="item.name === 'enderecos'">
+              <div class="space-y-3 px-4 pb-4">
+                <div *ngFor="let endereco of enderecos"
+                     class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-700 text-[0.95rem] font-medium text-textPrimary
+                      transition-transform duration-200 ease-in-out hover:-translate-y-1 hover:shadow-lg cursor-pointer uppercase">
+                  <div><b>LOGRADOURO:</b> {{ endereco.logradouro }}</div>
+                  <div *ngIf="endereco.numero"><b>NÚMERO:</b> {{ endereco.numero }}</div>
+                  <div *ngIf="endereco.complemento"><b>COMPLEMENTO:</b> {{ endereco.complemento }}</div>
+                  <div><b>BAIRRO:</b> {{ endereco.bairro }}</div>
+                  <div><b>CIDADE:</b> {{ endereco.cidade }}</div>
+                  <div><b>UF:</b> {{ endereco.uf }}</div>
+                  <div><b>CEP:</b> {{ endereco.cep }}</div>
+                </div>
+              </div>
+
+            </ng-container>
+
+            <!-- Vínculos -->
+            <ng-container *ngIf="item.name === 'vinculos'" class="space-y-3 px-4 pb-4">
+              <div *ngFor="let vinculo of vinculos"
+                   class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-700 text-[0.95rem] font-medium text-textPrimary
+                      transition-transform duration-200 ease-in-out hover:-translate-y-1 hover:shadow-lg cursor-pointer uppercase">
+                <div><b>CPF:</b> {{ vinculo.cpf_vinculo | cpfFormat }}</div>
+                <div><b>NOME:</b> {{ vinculo.nome_vinculo }}</div>
+                <div><b>TIPO:</b> {{ vinculo.tipo_vinculo }}</div>
+              </div>
+            </ng-container>
+
+          </div>
         </div>
       </div>
     </ng-container>
-  </div>
 
 
-  <!-- BÔNUS: Se quiser exibir o bloco detalhado apenas em resultado completo ou quando mostrarBotao for falso -->
-  <div *ngIf="!mostrarBotao">
-
-    <!-- Vinculos -->
-    <div *ngIf="vinculos.length > 0" class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
-      <label class="font-semibold text-gray-700">Vínculos</label>
-      <div>
-        <div
-          *ngFor="let vinculo of vinculos"
-          class="p-4 bg-white rounded-lg shadow-sm transition-transform transform hover:-translate-y-1 hover:shadow-md m-2"
-        >
-          <span class="block">
-            <span class="font-bold text-gray-700">CPF Vínculo: </span>
-            <span class="text-gray-700">{{ vinculo.cpf_vinculo | cpfFormat}}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Nome Vínculo: </span>
-            <span class="text-gray-700">{{ vinculo.nome_vinculo }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Tipo Vínculo: </span>
-            <span class="text-gray-700">{{ vinculo.tipo_vinculo }}</span>
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Telefones -->
-    <div *ngIf="telefones.length > 0" class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
-      <label class="font-semibold text-gray-700">Telefones</label>
-      <div>
-        <div
-          *ngFor="let telefone of telefones"
-          class="p-4 bg-white rounded-lg shadow-sm transition-transform transform hover:-translate-y-1 hover:shadow-md m-2"
-        >
-          <span class="block">
-            <span class="font-bold text-gray-700">DDD: </span>
-            <span class="text-gray-700">{{ telefone.ddd }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Número: </span>
-            <span class="text-gray-700">{{ telefone.numero }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Whatsapp: </span>
-            <span class="text-gray-700">{{ telefone.whatsapp ? 'Sim' : 'Não' }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Tipo: </span>
-            <span class="text-gray-700">{{ telefone.tipo }}</span>
-          </span>
-        </div>
-      </div>
-      <ng-template #naoEncontradoTelefones>
-        <div class="p-4 bg-white rounded-lg shadow-sm">
-          <span class="text-gray-700 font-medium">Telefone: (Não Encontrado)</span>
-        </div>
-      </ng-template>
-    </div>
-
-    <!-- Histórico Profissional -->
-    <div *ngIf="historicoProfissional.length > 0" class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
-      <label class="font-semibold text-gray-700">Histórico Profissional</label>
-      <div>
-        <div
-          *ngFor="let historico of historicoProfissional"
-          class="p-4 bg-white rounded-lg shadow-sm transition-transform transform hover:-translate-y-1 hover:shadow-md m-2"
-        >
-          <span class="block">
-            <span class="font-bold text-gray-700">CNPJ: </span>
-            <span class="text-gray-700">{{ historico.cnpj }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Razão Social: </span>
-            <span class="text-gray-700">{{ historico.razaoSocial }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Setor: </span>
-            <span class="text-gray-700">{{ historico.setor }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Cargo: </span>
-            <span class="text-gray-700">{{ historico.cboDescricao }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Faixa Salarial: </span>
-            <span class="text-gray-700">{{ historico.faixaSalarial }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Renda Estimada: </span>
-            <span class="text-gray-700">
-              {{ historico.rendaEstimada | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
-            </span>
-          </span>
-        </div>
-      </div>
-      <ng-template #naoEncontradoHistorico>
-        <div class="p-4 bg-white rounded-lg shadow-sm">
-          <span class="text-gray-700 font-medium">Histórico Profissional: (Não Encontrado)</span>
-        </div>
-      </ng-template>
-    </div>
-
-    <!-- Participação Societária -->
-    <div *ngIf="participacaoSocietaria.length > 0" class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
-      <label class="font-semibold text-gray-700">Participação Societária</label>
-      <div>
-        <div
-          *ngFor="let participacao of participacaoSocietaria"
-          class="p-4 bg-white rounded-lg shadow-sm transition-transform transform hover:-translate-y-1 hover:shadow-md m-2"
-        >
-          <span class="block">
-            <span class="font-bold text-gray-700">Cargo: </span>
-            <span class="text-gray-700">{{ participacao.cargo }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">CNPJ: </span>
-            <span class="text-gray-700">{{ participacao.cnpj | mask:"00.000.000/0000-00" }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Data Entrada: </span>
-            <span class="text-gray-700">{{ participacao.data_entrada }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Razão Social: </span>
-            <span class="text-gray-700">{{ participacao.razao_social }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Situação: </span>
-            <span class="text-gray-700">{{ participacao.situacao_cadastral }}</span>
-          </span>
-        </div>
-      </div>
-      <ng-template #naoEncontradoParticipacao>
-        <div class="p-4 bg-white rounded-lg shadow-sm">
-          <span class="text-gray-700 font-medium">Participação Societária: (Não Encontrado)</span>
-        </div>
-      </ng-template>
-    </div>
-
-    <!-- E-Mails -->
-    <div *ngIf="emails.length > 0" class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
-      <label class="font-semibold text-gray-700">E-Mail</label>
-      <div>
-        <div
-          *ngFor="let email of emails"
-          class="p-4 bg-white rounded-lg shadow-sm transition-transform transform hover:-translate-y-1 hover:shadow-md m-2"
-        >
-          <span class="text-gray-700">{{ email }}</span>
-        </div>
-      </div>
-      <ng-template #naoEncontradoEmail>
-        <div class="p-4 bg-white rounded-lg shadow-sm">
-          <span class="text-gray-700 font-medium">E-Mail: (Não Encontrado)</span>
-        </div>
-      </ng-template>
-    </div>
-
-    <!-- Endereços -->
-    <div *ngIf="enderecos.length > 0" class="mt-6 space-y-4 bg-gray-100 p-2 rounded-lg">
-      <label class="font-semibold text-gray-700">Endereço</label>
-      <div>
-        <div
-          *ngFor="let endereco of enderecos"
-          class="p-4 bg-white rounded-lg shadow-sm transition-transform transform hover:-translate-y-1 hover:shadow-md m-2"
-        >
-          <span class="block">
-            <span class="font-bold text-gray-700">Logradouro: </span>
-            <span class="text-gray-700">{{ endereco.logradouro }}</span>
-          </span>
-          <span class="block" *ngIf="endereco.numero">
-            <span class="font-bold text-gray-700">Número: </span>
-            <span class="text-gray-700">{{ endereco.numero }}</span>
-          </span>
-          <span class="block" *ngIf="endereco.complemento">
-            <span class="font-bold text-gray-700">Complemento: </span>
-            <span class="text-gray-700">{{ endereco.complemento }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Bairro: </span>
-            <span class="text-gray-700">{{ endereco.bairro }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">Cidade: </span>
-            <span class="text-gray-700">{{ endereco.cidade }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">UF: </span>
-            <span class="text-gray-700">{{ endereco.uf }}</span>
-          </span>
-          <span class="block">
-            <span class="font-bold text-gray-700">CEP: </span>
-            <span class="text-gray-700">{{ endereco.cep }}</span>
-          </span>
-        </div>
-      </div>
-      <ng-template #naoEncontradoEndereco>
-        <div class="p-4 bg-white rounded-lg shadow-sm">
-          <span class="text-gray-700 font-medium">Endereço: (Não Encontrado)</span>
-        </div>
-      </ng-template>
-    </div>
 
   </div>
+  <!-- E-mails -->
+  <ng-container *ngIf="resultadoCompleto && emails.length > 0">
+    <div class="mt-6 bg-white rounded-lg shadow overflow-hidden">
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center
+                px-4 sm:px-6 py-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors">
+        <div class="flex items-center gap-2 text-textPrimary text-sm font-medium">
+          <mat-icon class="text-primary">mail</mat-icon>
+          <span class="uppercase">E-mails</span>
+        </div>
+      </div>
+      <div class="space-y-3 px-4 pb-4">
+        <div *ngFor="let email of emails"
+             class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-700 text-[0.95rem] font-medium text-textPrimary
+                  transition-transform duration-200 ease-in-out hover:-translate-y-1 hover:shadow-lg cursor-pointer uppercase">
+          {{ email }}
+        </div>
+      </div>
+    </div>
+  </ng-container>
 
-  <!-- Botão para compra, se desejar -->
-  <div class="mt-6" *ngIf="mostrarBotao">
-    <button (click)="scrollParaCompra()"
-            class="w-full bg-blue-900 text-white py-3 rounded-lg font-bold text-lg transition-transform transform hover:-translate-y-1 hover:shadow-md">
-      {{ textoBotao }}
+  <!-- Signos -->
+  <ng-container *ngIf="resultadoCompleto && signos.length > 0">
+    <div class="mt-6 bg-white rounded-lg shadow overflow-hidden">
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center
+                px-4 sm:px-6 py-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors">
+        <div class="flex items-center gap-2 text-textPrimary text-sm font-medium">
+          <mat-icon class="text-primary">stars</mat-icon>
+          <span class="uppercase">Signos</span>
+        </div>
+      </div>
+      <div class="space-y-3 px-4 pb-4">
+        <div *ngFor="let sig of signos"
+             class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-700 text-[0.95rem] font-medium text-textPrimary
+                  transition-transform duration-200 ease-in-out hover:-translate-y-1 hover:shadow-lg cursor-pointer uppercase">
+          <b>{{ sig.nome }}:</b> {{ sig.valor }}
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!--   Benefícios do Completo -->
+  <div class="mt-8 bg-white rounded-lg shadow p-6">
+    <h3 class="flex items-center justify-center gap-2 text-primary font-semibold text-lg mb-4">
+      <mat-icon>diamond</mat-icon>
+      O que você ganha com o relatório completo
+    </h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div *ngFor="let b of beneficios" class="flex items-start gap-2">
+        <mat-icon class="text-green-600 text-sm">check</mat-icon>
+        <span class="text-textPrimary text-sm">{{ b }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Secundário -->
+  <div class="mt-8 text-center">
+    <button
+      (click)="scrollParaCompra()"
+      class="inline-flex items-center gap-2 text-primary font-semibold py-3 px-6
+             rounded-full border-2 border-primary bg-white hover:bg-primaryContrast hover:text-white
+             transition-colors">
+      <i class="fas fa-arrow-up"></i>
+      Quero relatório completo
     </button>
+    <p class="text-textPrimary text-xs mt-2 max-w-lg mx-auto">
+      Desbloqueie e-mails, celulares, endereços, vínculos e mais 28 informações completas em nosso relatório premium.
+    </p>
   </div>
+
+  <!-- Garantia de Segurança -->
+  <div class="mt-6 pt-4 border-t border-gray-200 flex items-center justify-center gap-2 text-textPrimary text-xs">
+    <i class="fas fa-lock text-green-600"></i>
+    <span>100% seguro e confidencial – Seus dados estão protegidos</span>
+  </div>
+
 </div>

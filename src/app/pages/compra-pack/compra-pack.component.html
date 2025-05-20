@@ -1,0 +1,52 @@
+<div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
+  <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
+    <h1 class="text-3xl font-bold text-green-600 mb-6 text-center">Compra Aprovada!</h1>
+    <p class="mb-6 text-gray-800 text-center">
+      Obrigado por adquirir nosso pacote de busca de CPF. Agora você pode realizar pesquisas sem precisar efetuar vários pagamentos.
+    </p>
+
+    <div class="border border-dashed border-blue-500 rounded p-4 mb-6">
+      <h2 class="text-xl font-semibold text-blue-500 mb-3">Seu Cupom:</h2>
+      <div class="flex items-center">
+        <input
+          id="couponCode"
+          type="text"
+          readonly
+          [value]="cupom"
+          class="w-full p-3 border rounded-l focus:outline-none text-3xl"
+        />
+
+        <button
+          (click)="copyCoupon()"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-r"
+        >
+          Copiar
+        </button>
+      </div>
+      <p class="text-sm text-gray-500 mt-3">
+        Use esse cupom para fazer pesquisas no site sem novos pagamentos. Você poderá utilizá-lo <strong>{{usageCount}}</strong> vezes.
+      </p>
+      <p class="text-sm text-gray-500 mt-2">
+        O cupom será enviado para o e-mail cadastrado no ato da compra.
+      </p>
+    </div>
+
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-3">Como Usar</h2>
+      <ul class="list-disc ml-6 text-gray-700">
+        <li>Realize a pesquisa normalmente.</li>
+        <li>Na hora do pagamento, digite os dados de quem realizou o pagamento.</li>
+        <li>Digite o cupom na aba de cupom.</li>
+      </ul>
+      <p class="text-sm text-gray-500 mt-3">
+        Obs: Esse cupom dá direito a uma busca e, no caso de compras adicionais, oferece apenas um desconto no valor total do item.
+      </p>
+    </div>
+
+    <div class="text-center">
+      <a routerLink="/" class="bg-primaryContrast hover:bg-primary text-white px-6 py-3 rounded">
+        Voltar para Home
+      </a>
+    </div>
+  </div>
+</div>

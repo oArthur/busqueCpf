@@ -7,7 +7,8 @@
   <!-- Mostra os dados apenas quando carregando = false -->
   <ng-container *ngIf="!carregando">
     <app-form-resultado
-      [titulo]="'Relatório Parcial'"
+      class="w-full max-w-3xl"
+      [titulo]="'Relatório Parcial – Visualização Limitada'"
       [dados]="dadosParciais"
       [mostrarBotao]="true"
       [textoBotao]="'🔒 Liberar Relatório Completo'"

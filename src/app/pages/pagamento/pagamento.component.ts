@@ -1,10 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PagarMeService } from '../../services/pagar-me.service';
 import { TitleComponent } from '../../components/title/title.component';
 import {CurrencyPipe, NgIf} from '@angular/common';
 import {FormResultadoComponent} from '../../components/form-resultado/form-resultado.component';
 import {CpfService} from '../../services/cpf.service';
+import {CupomService} from '../../services/cupom.service';
+import {IGenerateCupom} from '../../interfaces';
 
 @Component({
   selector: 'app-pagamento',
@@ -18,7 +20,7 @@ import {CpfService} from '../../services/cpf.service';
   ],
   styleUrls: ['./pagamento.component.scss']
 })
-export class PagamentoComponent implements OnInit, OnDestroy {
+export class PagamentoComponent implements OnInit, OnDestroy, AfterViewInit {
   pagamento: any = {};
   status = "Pendente";
   carregando = true;
@@ -30,29 +32,36 @@ export class PagamentoComponent implements OnInit, OnDestroy {
   tentativas:number = 0;
   maxTentativas:number = 13;
   isAdicionais: boolean = false;
+  pacote: boolean = false;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private apiPagarme: PagarMeService,
-              private cpfApiService: CpfService) {}
+              private cpfApiService: CpfService,
+              private cupomService: CupomService) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.cpf = params['cpf'] || null;
       this.id = params['id'] || null;
       this.idPrincipal = params['idPrincipal'] || null;
-    //   ID da primeira compra realizada (compra de pedido completo.).
     });
-    console.log(`cpf: ${this.cpf}, id_pedido: ${this.id}`)
+
     if (history.state && history.state['pagamento']) {
       this.pagamento = history.state['pagamento'];
       this.isAdicionais = history.state['isAdicionais'] || false;
-      console.log("Dados carregados no componente de pagamento:", this.pagamento);
+      this.pacote = history.state['pacote'] || null;
+
+
       this.carregando = false;
       this.iniciarVerificacaoAutomatica();
     } else {
-      this.router.navigate(['/']); // Se necessário, redireciona para evitar erro
+      this.router.navigate(['/']); // Redireciona se não houver state esperado
     }
+  }
+
+  ngAfterViewInit() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
 
@@ -79,8 +88,10 @@ export class PagamentoComponent implements OnInit, OnDestroy {
         if (statusPago) {
           // Se for nova compra, redireciona para o resultado completo automaticamente.
           // Se for compra de itens adicionais, atualiza o status mas não redireciona.
-          if (!this.isAdicionais) {
+          if (!this.isAdicionais && !this.pacote) {
             this.buscaCpfApi();
+          } else if (this.pacote){
+            this.redirectPacote()
           } else {
             this.status = "Pagamento aprovado para itens adicionais.";
             // Aqui você pode interromper a verificação automática, se desejar:
@@ -97,7 +108,29 @@ export class PagamentoComponent implements OnInit, OnDestroy {
       }
     });
   }
-  // TODO, mesmo com o pagamento aprovado o usuario não foi redirecionado para o lugar correto.
+
+  redirectPacote(){
+    clearInterval(this.intervaloVerificacao);
+    this.cupomService.generateCupom(this.id, this.cpf).subscribe({
+      next: (res: IGenerateCupom) => {
+        this.carregando = false;
+
+        if (res.success){
+          this.router.navigate(["/obrigado-pacote"], {
+            state: {cupom: res.code, limite: res.limite}
+          })
+        }else {
+          console.log("Pedido não encontrado.")
+        }
+      },
+      error: () => {
+        this.carregando = false
+
+        alert("Error ao gerar cupom. Tente novamente mais tarde!")
+      }
+    })
+
+  }
   buscaCpfApi(){
     clearInterval(this.intervaloVerificacao);
     this.cpfApiService.buscarCpf(this.cpf, true).subscribe({

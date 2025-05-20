@@ -7,9 +7,26 @@ export interface CupomResponse {
   };
 }
 
+export interface IGenerateCupom{
+  success: boolean,
+  code?: string
+  limite?: number
+}
+
 export interface Iuser {
   nome: string,
   email: string,
   document: string,
   telefone: string
+}
+
+export interface ICardPack {
+  id: number,
+  isMostPopular: boolean,
+  title: string,
+  subtitle: string,
+  value: number,
+  price: number,
+  description: any,
+  buttonLabel: string
 }

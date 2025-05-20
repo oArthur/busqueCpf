@@ -42,7 +42,7 @@
   </div>
 
   <!-- Campo de Cupom com botão -->
-  <div>
+  <div *ngIf="showCupom">
     <label class="block text-gray-700">Cupom de Desconto</label>
     <div class="flex space-x-2">
       <input type="text" formControlName="cupom"

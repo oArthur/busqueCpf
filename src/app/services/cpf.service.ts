@@ -51,10 +51,10 @@ export class CpfService {
       const mainFields = ['nome', 'data_nascimento', 'cpf'];
       const countFields: { [key: string]: { singular: string, plural: string } } = {
         telefones: { singular: 'telefone', plural: 'telefones' },
-        historico_profissional: { singular: 'registro de histórico profissional', plural: 'registros de histórico profissional' },
-        participacao_societaria: { singular: 'registro de participação societária', plural: 'registros de participação societária' },
-        vinculos: { singular: 'registro de vínculo', plural: 'registros de vínculos' },
-        enderecos: { singular: 'registro de endereço', plural: 'registros de endereços' }
+        historico_profissional: { singular: 'registro de histórico profissional', plural: 'históricos profissionais' },
+        participacao_societaria: { singular: 'registro de participação societária', plural: 'participações societárias' },
+        vinculos: { singular: 'registro de vínculo', plural: 'vínculos' },
+        enderecos: { singular: 'registro de endereço', plural: 'endereços' }
       };
 
       let resultado: any = {};
@@ -84,7 +84,7 @@ export class CpfService {
 
       // 4. Processar os demais campos:
       // Se o campo estiver vazio, retorna "Sem registro".
-      // Caso tenha valor, para busca parcial retorna "Verificado ✅"
+      // Caso tenha valor, para busca parcial retorna "null
       // e para busca completa retorna o valor original.
       Object.keys(item).forEach(field => {
         if (!mainFields.includes(field) && !(field in countFields)) {
@@ -97,7 +97,7 @@ export class CpfService {
           ) {
             resultado[field] = "Sem registro";
           } else {
-            resultado[field] = completa ? valor : "Verificado ✅";
+            resultado[field] = completa ? valor : null;
           }
         }
       });

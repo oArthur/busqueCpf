@@ -1,0 +1,38 @@
+<div class="relative flex flex-col p-6 bg-white border border-gray-200 rounded-lg shadow-md max-w-sm">
+  <div
+    *ngIf="data.isMostPopular"
+    class="absolute top-0 right-0 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-bl-lg"
+  >Mais vantajoso</div>
+  <h2 class="text-xl font-bold mb-1">{{ data.title }}</h2>
+  <div class="flex items-baseline">
+    <span class="text-4xl font-bold mr-2">{{ data.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+    <span class="text-sm text-gray-500">Compra única</span>
+  </div>
+  <h2 class="text-sm text-gray-500 mb-4">{{ data.subtitle }}</h2>
+  <button
+    class="w-full bg-primary text-white py-2 rounded-md mb-6 hover:bg-primaryContrast transition-colors" (click)="comprarPack(data.id, data.price, data.value)">
+    {{ data.buttonLabel }}
+  </button>
+  <ul class="space-y-2">
+    <li
+      class="flex items-center text-sm text-gray-700"
+      *ngFor="let feature of data.description"
+    >
+      <svg
+        class="w-4 h-4 mr-2 text-green-600 flex-shrink-0"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="3"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M5 13l4 4L19 7"
+        ></path>
+      </svg>
+      <span>{{ feature }}</span>
+    </li>
+  </ul>
+</div>

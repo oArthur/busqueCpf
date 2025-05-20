@@ -22,7 +22,6 @@ export class AppComponent implements OnInit{
   constructor(private router: Router) {
   }
 
-
   ngOnInit(): void {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -32,6 +31,7 @@ export class AppComponent implements OnInit{
       }
     });
   }
+
   irParaHome() {
     this.router.navigate(['/']); // Redireciona para a página inicial
   }

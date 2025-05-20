@@ -1,16 +1,27 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CurrencyPipe, DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import {
+  CurrencyPipe,
+  DatePipe, JsonPipe,
+  KeyValuePipe,
+  NgClass,
+  NgForOf,
+  NgIf,
+  NgSwitch,
+  NgSwitchCase,
+  NgSwitchDefault, TitleCasePipe
+} from '@angular/common';
 import { CpfFormatPipe } from '../../pipes/cpf-format.pipe';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { PrecoService } from '../../services/preco.service';
 import { Subscription } from 'rxjs';
 import {AdicionaisService} from '../../services/adicionais.service';
 import {NgxMaskPipe} from 'ngx-mask';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-form-resultado',
   standalone: true,
-  imports: [NgForOf, NgIf, CurrencyPipe, CpfFormatPipe, DatePipe, DateFormatPipe, NgClass, NgxMaskPipe],
+  imports: [NgForOf, NgIf, CurrencyPipe, CpfFormatPipe, DatePipe, DateFormatPipe, NgClass, NgxMaskPipe, NgSwitch, NgSwitchCase, NgSwitchDefault, KeyValuePipe, TitleCasePipe, MatIcon, JsonPipe],
   templateUrl: './form-resultado.component.html',
   styleUrls: ['./form-resultado.component.scss']
 })
@@ -31,6 +42,7 @@ export class FormResultadoComponent implements OnInit {
   historicoProfissional: any[] = [];
   emails: string[] = [];
   enderecos: any[] = [];
+  signos: any[] = [];
   vinculos: any[] = [];
   preco!: number;
   private precoSubscription!: Subscription;
@@ -38,10 +50,11 @@ export class FormResultadoComponent implements OnInit {
   constructor(private precoService: PrecoService,private adicionaisService: AdicionaisService) {}
 
   ngOnInit() {
-    console.log(this.dados);
+    // console.log(this.dados);
     this.precoSubscription = this.precoService.preco$.subscribe(value => {
       this.preco = value;
     });
+
 
     // Normaliza os dados e adiciona a propriedade "selected" para itens adicionais
     this.dados = this.dados.map(item => ({
@@ -75,6 +88,7 @@ export class FormResultadoComponent implements OnInit {
     if (emailItem && Array.isArray(emailItem.valor)) {
       this.emails = emailItem.valor;
     }
+    console.log(this.emails)
 
     // Endereços
     const enderecoItem = this.dados.find(item => item.name === 'enderecos');
@@ -86,8 +100,38 @@ export class FormResultadoComponent implements OnInit {
     if (vinculoItem && Array.isArray(vinculoItem.valor)) {
       this.vinculos = vinculoItem.valor;
     }
+    const signosItem = this.dados.find(item => item.name === 'signos');
+    if (signosItem && signosItem.valor && typeof signosItem.valor === 'object') {
+      this.signos = Object.entries(signosItem.valor).map(([key, value]) => ({
+        nome: this.getRotuloSigno(key),
+        valor: value
+      }));
+    }
   }
 
+  readonly rotulosSignos: { [key: string]: string } = {
+    zodiaco: 'Zodíaco',
+    zodiaco_elemento: 'Elemento do Zodíaco',
+    zodiaco_regente: 'Regente do Zodíaco',
+    chines: 'Chinês',
+    chines_elemento: 'Elemento Chinês',
+    maia: 'Maia',
+    egipcio: 'Egípcio',
+    celta: 'Celta',
+    vedico: 'Védico',
+    xamanico: 'Xamânico'
+  };
+
+  beneficios = ['Dados completos sem censura', 'Endereços atualizados', 'Telefones e e-mails válidos',
+    'Histórico de endereços', 'Vínculos familiares', 'Dados profissionais']
+
+  getRotuloSigno(chave: string): string {
+    return this.rotulosSignos[chave] || this.capitalize(chave.replace(/_/g, ' '));
+  }
+
+  private capitalize(texto: string): string {
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
 
   getRecordCount(item: any): number {
     const valor = item?.valor;
@@ -132,7 +176,6 @@ export class FormResultadoComponent implements OnInit {
       }
     }
   }
-
 
   scrollParaCompra() {
     const elemento = document.getElementById('compra');
