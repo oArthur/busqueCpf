@@ -89,7 +89,8 @@ export class InputSearchComponent {
         this.buscaPrincipal.enable();
         if (response) {
           this.router.navigate(['/resultado'], {
-            state: { dados: response, cpf: cpf }
+            state: { dados: response, cpf: cpf },
+            queryParamsHandling: 'preserve'
           });
         } else {
           alert('CPF não encontrado ou bloqueado.');
