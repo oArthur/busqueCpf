@@ -142,11 +142,14 @@ export class ResultadoCompletoComponent implements OnInit, OnDestroy {
     }
 
     if (chave === "renda") {
+      const numero = Number(valor);
+      if (isNaN(numero)) return "Sem registro";
+
       return new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL',
         minimumFractionDigits: 2
-      }).format(Number(valor));
+      }).format(numero);
     }
 
     return valor.toString();
