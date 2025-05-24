@@ -7,7 +7,7 @@ import { CupomResponse } from '../interfaces';
   providedIn: 'root',
 })
 export class PagarMeService {
-  private baseUrl = 'https://jarvis-app.referencia.company/webhook/generatePayment';
+  private baseUrl = 'https://jarvis-app.referencia.company/webhook-test/generatePayment';
 
   constructor(private http: HttpClient) {}
 
@@ -17,7 +17,8 @@ export class PagarMeService {
     cupom?: CupomResponse,
     adicionais?: string[],
     idPedido?: string,
-    pack?: number
+    pack?: number,
+    utmParams?: { [key: string]: string }
   ): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -73,6 +74,12 @@ export class PagarMeService {
     if (idPedido) body.idPedido = idPedido;
     if (cupom) body.cupom = cupom.cupom;
     if (adicionais) body.adicionais = adicionais;
+
+    if (utmParams) {
+      body.utmUrl = utmParams;
+    }
+
+
 
     return this.http.post(this.baseUrl, body, { headers });
   }

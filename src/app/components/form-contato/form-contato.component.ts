@@ -83,10 +83,12 @@ export class FormContatoComponent implements OnInit {
     const adicionaisParaEnviar = itensAdicionais.length ? itensAdicionais : undefined;
     const isAdicionais = !!adicionaisParaEnviar;
 
+    const urlParams = this.route.snapshot.queryParams;
+
     // Se idPedido existir, significa que é uma compra de item adicional.
     // Ajuste a chamada de createOrder para receber esse parâmetro opcional, se necessário.
     this.apiPagarme.createOrder(user, this.cpfBusca, this.cupom, adicionaisParaEnviar,
-      this.idPedido || undefined, this.pacote).subscribe({
+      this.idPedido || undefined, this.pacote, urlParams).subscribe({
       next: (response) => {
         this.carregando = false;
         this.orderGenerated.emit(response);
@@ -98,7 +100,8 @@ export class FormContatoComponent implements OnInit {
               id: response.id,
               ...(this.idPedido ? { idPrincipal: this.idPedido } : {})
             },
-            state: { pagamento: response, isAdicionais, pacote: this.pacote }
+            state: { pagamento: response, isAdicionais, pacote: this.pacote },
+            queryParamsHandling: 'preserve'
           });
         }
         else {

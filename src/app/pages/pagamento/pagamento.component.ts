@@ -82,7 +82,6 @@ export class PagamentoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   verificarPagamento() {
     if (!this.pagamento.id) return;
-    // TODO parei aqui, estava fazendo a logica de quando o pedido adicional é pago
     this.apiPagarme.getOrderApproved(this.pagamento.id).subscribe({
       next: (statusPago) => {
         if (statusPago) {
