@@ -88,13 +88,13 @@ export class PagamentoComponent implements OnInit, OnDestroy, AfterViewInit {
           // Se for nova compra, redireciona para o resultado completo automaticamente.
           // Se for compra de itens adicionais, atualiza o status mas não redireciona.
           if (!this.isAdicionais && !this.pacote) {
-            this.buscaCpfApi();
+            this.buscaCpfApi("result_paid");
           } else if (this.pacote){
             this.redirectPacote()
           } else {
             this.status = "Pagamento aprovado para itens adicionais.";
             // Aqui você pode interromper a verificação automática, se desejar:
-            this.buscaCpfApi();
+            this.buscaCpfApi("result_upsell");
             clearInterval(this.intervaloVerificacao);
           }
         } else {
@@ -130,7 +130,7 @@ export class PagamentoComponent implements OnInit, OnDestroy, AfterViewInit {
     })
 
   }
-  buscaCpfApi(){
+  buscaCpfApi(tipo_compra: string){
     clearInterval(this.intervaloVerificacao);
     this.cpfApiService.buscarCpf(this.cpf, true).subscribe({
       next: (response) => {
@@ -140,7 +140,7 @@ export class PagamentoComponent implements OnInit, OnDestroy, AfterViewInit {
           this.isLoading = false;
           const pathId = this.idPrincipal ? this.idPrincipal : this.id;
           this.router.navigate([`/resultado-completo/${pathId}`], {
-            queryParams: { cpf: this.cpf },
+            queryParams: { cpf: this.cpf, status: tipo_compra },
             state: { dados: response, cpf: this.cpf }
           });
         } else {
