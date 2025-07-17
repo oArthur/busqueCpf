@@ -174,7 +174,7 @@ export class ResultadoCompletoComponent implements OnInit, OnDestroy {
         console.log(this.itensJaComprados);
 
         this.precoService.setPreco(0);
-        this.cpfApiService.buscarCpf(this.cpf, true, this.itensJaComprados)
+        this.cpfApiService.buscarCpf(this.cpf, true, this.id, this.itensJaComprados)
           .subscribe({
             next: (response: any[]) => {
               this.carregando = false;

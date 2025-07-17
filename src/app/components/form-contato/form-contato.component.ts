@@ -93,15 +93,15 @@ export class FormContatoComponent implements OnInit {
         this.carregando = false;
         this.orderGenerated.emit(response);
         if (response && response.id) {
-          console.log(`Resposta da API no form-contato: ${response}`);
-          this.router.navigate(['/pagamento'], {
+          this.router.navigate(["/pagamento"], {
+            relativeTo: this.route, // importante para preservar corretamente
             queryParams: {
               cpf: this.cpfBusca,
               id: response.id,
               ...(this.idPedido ? { idPrincipal: this.idPedido } : {})
             },
-            state: { pagamento: response, isAdicionais, pacote: this.pacote },
-            queryParamsHandling: 'preserve'
+            queryParamsHandling: 'merge', // preserva e atualiza
+            state: { pagamento: response, isAdicionais, pacote: this.pacote }
           });
         }
         else {

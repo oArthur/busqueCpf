@@ -1,10 +1,19 @@
-<div class="w-full h-16 bg-primary flex items-center justify-center cursor-pointer" >
-  <div class="flex flex-row items-center" (click)="irParaHome()">
-    <h2 class="text-xl text-white font-bold">Busque CPF</h2>
-    <div>
-      <img class="h-12 ml-5" src="/assets/images/logo.png" alt="logo"/>
+<div class="w-full bg-primary">
+  <div class="max-w-screen-xl mx-auto h-16 flex items-center justify-between px-4 sm:px-6">
+    <!-- Logo e título -->
+    <div class="flex items-center space-x-3" (click)="irParaHome()">
+      <h2 class="text-lg sm:text-xl text-white font-bold">Busque CPF</h2>
+      <img class="h-10 sm:h-12" src="/assets/images/logo.png" alt="logo" />
+    </div>
+
+    <!-- Links à direita -->
+    <div class="flex space-x-4 sm:space-x-6">
+      <a href="https://suporte.busquecpf.com.br" class="text-white text-sm sm:text-base hover:underline font-medium">Suporte</a>
+      <a href="https://suporte.busquecpf.com.br/minhas-pesquisas" class="text-white text-sm sm:text-base hover:underline font-medium">Meus Pedidos</a>
     </div>
   </div>
 </div>
+
+
 
 <router-outlet />

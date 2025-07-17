@@ -12,8 +12,16 @@ export class CpfService {
 
   constructor(private http: HttpClient) { }
 
-  buscarCpf(cpf: string, dadosCompletos: boolean = false, itensAdicionais?: string[]): Observable<any> {
-    const url = `${this.apiUrl}?numero=${cpf}&dados_completos=${dadosCompletos}`;
+  buscarCpf(cpf: string, dadosCompletos: boolean = false, id_pedido?: string, itensAdicionais?: string[]): Observable<any> {
+    let url = `${this.apiUrl}?numero=${cpf}&dados_completos=${dadosCompletos}`;
+    if (dadosCompletos && id_pedido) {
+      url += `&id_pedido=${id_pedido}`;
+    }
+    if (itensAdicionais?.length) {
+      for (const item of itensAdicionais) {
+        url += `&itens_adicionais=${item}`;
+      }
+    }
     const headers = new HttpHeaders({
       'api-key': this.apiKey
     });

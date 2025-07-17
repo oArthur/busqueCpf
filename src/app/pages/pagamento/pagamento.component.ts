@@ -132,7 +132,7 @@ export class PagamentoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   buscaCpfApi(tipo_compra: string){
     clearInterval(this.intervaloVerificacao);
-    this.cpfApiService.buscarCpf(this.cpf, true).subscribe({
+    this.cpfApiService.buscarCpf(this.cpf, true, this.pagamento.id).subscribe({
       next: (response) => {
         this.carregando = false;
 

@@ -1,8 +1,9 @@
 <h2 class="md:text-md text-sm text-center text-gray-600 mt-10">Consulte qualquer pessoa com rapidez e segurança</h2>
 <h2 class="font-bold tracking-wide md:text-3xl text-2xl text-secondary text-center mt-1">Tudo em um só lugar</h2>
-<p class="md:text-md text-sm  text-center text-gray-600 mt-4">Você pode obter até 20 informações validadas a partir do CPF</p>
+<p class="md:text-md text-sm  text-center text-gray-600 mt-4">Consulte até 20 tipos de informações validadas, liberadas conforme disponibilidade e após a compra do Relatório Completo</p>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4  gap-4 p-4">
   <app-item *ngFor="let item of items" [nome]="item.name" [cor]="item.cor"></app-item>
 </div>
-<p class="text-center text-sm text-gray-600 p-5">Informações com destaque azul claro são adquiridas após a compra do Relatório Completo.</p>
+<p class="text-center text-sm text-gray-600 mt-5">Informações com destaque em azul claro são desbloqueadas <span class="font-bold">após a compra</span> do Relatório Completo, <span class="font-bold">se disponíveis nos registros públicos</span></p>
+<p class="text-center text-sm text-gray-600 mt-4">⚠️ Nem todos os campos estarão preenchidos. Informações são exibidas como “ <span class="font-bold">Sem registro</span> ” quando não existem dados públicos disponíveis. A busca é feita somente após a confirmação de compra.</p>
