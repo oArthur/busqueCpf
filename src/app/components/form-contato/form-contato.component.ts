@@ -40,7 +40,11 @@ export class FormContatoComponent implements OnInit {
   contato = new FormGroup({
     nome: new FormControl<string | null>('', [Validators.required, Validators.minLength(3)]),
     cpf: new FormControl<string | null>('', [Validators.required, Validators.pattern(/^\d{11}$/)]),
-    email: new FormControl<string | null>('', [Validators.required, Validators.email]),
+    email: new FormControl<string | null>('', [
+      Validators.required,
+      Validators.email,
+      Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/)
+    ]),
     cupom: new FormControl<string | null>(''),
   });
 

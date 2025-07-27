@@ -2,11 +2,12 @@ import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PagarMeService } from '../../services/pagar-me.service';
 import { TitleComponent } from '../../components/title/title.component';
-import {CurrencyPipe, NgIf} from '@angular/common';
+import {CurrencyPipe, NgIf, Location} from '@angular/common';
 import {FormResultadoComponent} from '../../components/form-resultado/form-resultado.component';
 import {CpfService} from '../../services/cpf.service';
 import {CupomService} from '../../services/cupom.service';
 import {IGenerateCupom} from '../../interfaces';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-pagamento',
@@ -16,7 +17,8 @@ import {IGenerateCupom} from '../../interfaces';
     TitleComponent,
     NgIf,
     FormResultadoComponent,
-    CurrencyPipe
+    CurrencyPipe,
+    MatIcon
   ],
   styleUrls: ['./pagamento.component.scss']
 })
@@ -38,27 +40,43 @@ export class PagamentoComponent implements OnInit, OnDestroy, AfterViewInit {
               private router: Router,
               private apiPagarme: PagarMeService,
               private cpfApiService: CpfService,
-              private cupomService: CupomService) {}
+              private cupomService: CupomService,
+              private location: Location) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.cpf = params['cpf'] || null;
       this.id = params['id'] || null;
       this.idPrincipal = params['idPrincipal'] || null;
+
+      if (!this.id) {
+        this.router.navigate(['/']); // sem ID não tem como continuar
+        return;
+      }
+
+      if (history.state && history.state['pagamento']) {
+        // Caso 1: carregamento padrão via navegação interna
+        this.pagamento = history.state['pagamento'];
+        this.isAdicionais = history.state['isAdicionais'] || false;
+        this.pacote = history.state['pacote'] || false;
+        this.carregando = false;
+        this.iniciarVerificacaoAutomatica();
+      } else {
+        // Caso 2: carregamento via acesso direto ou F5 — buscar via API
+        this.apiPagarme.getPagamentoById(this.id).subscribe({
+          next: (res) => {
+            this.pagamento = res;
+            this.carregando = false;
+            this.iniciarVerificacaoAutomatica();
+          },
+          error: () => {
+            this.router.navigate(['/']);
+          }
+        });
+      }
     });
-
-    if (history.state && history.state['pagamento']) {
-      this.pagamento = history.state['pagamento'];
-      this.isAdicionais = history.state['isAdicionais'] || false;
-      this.pacote = history.state['pacote'] || null;
-
-
-      this.carregando = false;
-      this.iniciarVerificacaoAutomatica();
-    } else {
-      this.router.navigate(['/']); // Redireciona se não houver state esperado
-    }
   }
+
 
   ngAfterViewInit() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -107,6 +125,68 @@ export class PagamentoComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   }
+
+  voltarParaConsulta(): void {
+    this.carregando = true;
+    this.cpfApiService.buscarCpf(this.cpf, false).subscribe({
+      next: (response) => {
+        this.carregando = false;
+        if (response) {
+          this.router.navigate(['/resultado'], {
+            queryParams: {cpf: this.cpf, status: "result_preview"},
+            state: { dados: response, cpf: this.cpf },
+            queryParamsHandling: 'merge'
+          });
+        } else {
+          alert('CPF não encontrado ou bloqueado.');
+        }
+      },
+      error: () => {
+        this.carregando = false;
+        alert('Erro ao buscar CPF. Tente novamente mais tarde.');
+      }
+    });
+  }
+
+
+  gerarNovoPagamento() {
+    if (!this.pagamento.id) return;
+    this.carregando = true;
+
+    this.apiPagarme.reGerarPagamento(this.pagamento.id).subscribe({
+      next: (res) => {
+        // Caso 1: Já foi pago
+        if (res?.status === 'success' && res?.pedido === 'Alredy paid') {
+          this.verificarPagamento();
+          return;
+        }
+
+        // Caso 2: Novo QR Code gerado
+        if (res?.sucess === true && res?.id) {
+          // Atualiza rota com novo ID mantendo outros queryParams
+          this.pagamento = res;
+          this.router.navigate([], {
+            queryParams: { id: res.id },
+            queryParamsHandling: 'merge',
+          });
+          this.carregando = false;
+          return;
+        }
+
+        // Caso de resposta inesperada
+
+        console.warn('Resposta inesperada ao tentar gerar novo pagamento:', res);
+      },
+      error: (err) => {
+        // Caso 3: Erro na requisição
+        this.carregando = false;
+        console.error('Erro ao tentar gerar novo pagamento:', err);
+        // Aqui você pode exibir um toast, alerta ou snackbar
+        // this.toastService.error('Erro ao gerar novo pagamento');
+      }
+    });
+  }
+
 
   redirectPacote(){
     clearInterval(this.intervaloVerificacao);

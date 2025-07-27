@@ -10,6 +10,7 @@ import {CurrencyPipe, NgIf} from '@angular/common';
 import {PrecoService} from '../../services/preco.service';
 import {Subscription} from 'rxjs';
 import {CpfFormatPipe} from '../../pipes/cpf-format.pipe';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-resultado-completo',
@@ -20,7 +21,8 @@ import {CpfFormatPipe} from '../../pipes/cpf-format.pipe';
     FormResultadoComponent,
     TransparenciaComponent,
     CpfFormatPipe,
-    NgIf
+    NgIf,
+    MatIcon
   ],
   templateUrl: './resultado-completo.component.html',
   styleUrl: './resultado-completo.component.scss'

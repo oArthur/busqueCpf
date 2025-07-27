@@ -16,5 +16,12 @@
 
   <app-form-compra *ngIf="!carregando && preco > 0" tipoBusca="completa" [cpf]="cpf"></app-form-compra>
 
+  <div class="text-center mt-10" *ngIf="!carregando">
+    <a href="/" class="inline-flex items-center gap-2 text-primary font-semibold py-3 px-6
+             rounded-full border-2 border-primary bg-white hover:bg-primaryContrast hover:text-white
+             transition-colors"> <mat-icon>autorenew</mat-icon>Nova Pesquisa</a>
+  </div>
+
+
   <app-transparencia *ngIf="!carregando"/>
 </div>

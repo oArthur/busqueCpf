@@ -1,4 +1,5 @@
-<ng-container *ngIf="pagamento.valor > 0; else cupom100">
+<ng-container *ngIf="!carregando">
+  <ng-container *ngIf="pagamento.valor > 0; else cupom100">
   <!-- Tela original para pagamentos com valor maior que zero -->
   <app-title
     title="Pix gerado com sucesso!"
@@ -29,10 +30,13 @@
       <!-- Botão para copiar -->
       <button
         (click)="copyToClipboard(pagamento.qr_code)"
-        class="w-full mt-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-primaryContrast hover:text-gray-100 transition text-sm"
+        class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-lg shadow-md hover:bg-primaryContrast active:translate-y-[1px] transition duration-300 text-sm"
       >
-        Copiar Código Pix
+        <mat-icon>content_copy</mat-icon>
+        <span>Copiar Código Pix</span>
       </button>
+
+
 
       <!-- Loading (exibido somente se 'isLoading' for true) -->
       <div class="flex items-center justify-center mt-4 space-x-2" *ngIf="isLoading">
@@ -58,18 +62,39 @@
       <p class="text-gray-600 text-sm sm:text-base mb-4 text-center" *ngIf="verificarPagamento">
         Caso tenha realizado o pagamento e não tenha sido redirecionado, clique no botão abaixo para verificar o pagamento.
       </p>
-
-      <div class="flex justify-center">
-        <button
-          *ngIf="verificarPagamento"
-          (click)="verificarPagamento()"
-          class="w-full sm:w-auto bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-300 text-sm"
-        >
-          Verificar Pagamento
-        </button>
-      </div>
     </div>
+    <div class="flex flex-wrap justify-center gap-3 mt-10 text-center mb-5">
+      <!-- Botão Validar Pagamento -->
+      <button
+        *ngIf="verificarPagamento"
+        (click)="verificarPagamento()"
+        class="flex items-center justify-center gap-2 px-6 py-3 min-w-[180px] bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 active:translate-y-[1px] transition duration-300"
+      >
+        <mat-icon>find_replace</mat-icon>
+        <span>Validar Pagamento</span>
+      </button>
+
+      <!-- Botão Voltar para Consulta -->
+      <button
+        (click)="voltarParaConsulta()"
+        class="flex items-center justify-center gap-2 px-6 py-3 min-w-[180px] bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 active:translate-y-[1px] transition duration-300"
+      >
+        <mat-icon>arrow_back</mat-icon>
+        <span>Voltar para Consulta</span>
+      </button>
+
+      <!-- Botão Gerar Novo QR Code -->
+      <button
+        (click)="gerarNovoPagamento()"
+        class="flex items-center justify-center gap-2 px-6 py-3 min-w-[180px] bg-yellow-500 text-white rounded-lg shadow-md hover:bg-yellow-600 active:translate-y-[1px] transition duration-300"
+      >
+        <mat-icon>autorenew</mat-icon>
+        <span>Gerar Novo QR Code</span>
+      </button>
+    </div>
+
   </div>
+  </ng-container>
 </ng-container>
 
 <!-- Template alternativo para cupom de 100% (pagamento.valor == 0) -->
@@ -89,3 +114,8 @@
     </div>
   </div>
 </ng-template>
+<ng-container *ngIf="carregando">
+  <div class="flex items-center justify-center mt-10">
+    <div class="spinner"></div>
+  </div>
+</ng-container>

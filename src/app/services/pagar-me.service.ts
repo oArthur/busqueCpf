@@ -8,6 +8,7 @@ import { CupomResponse } from '../interfaces';
 })
 export class PagarMeService {
   private baseUrl = 'https://jarvis-app.referencia.company/webhook/generatePayment';
+  private baseUrlPayment = 'https://jarvis-app.referencia.company/webhook/getPaymentCpf';
 
   constructor(private http: HttpClient) {}
 
@@ -101,5 +102,30 @@ export class PagarMeService {
           return of(false);
         })
       );
+  }
+
+  reGerarPagamento(id_pedido: string): Observable<any>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    });
+
+    const body={
+      id_pedido: id_pedido
+    }
+
+    return this.http.post(this.baseUrl, body, {headers})
+  }
+
+  getPagamentoById(id_pedido: string): Observable<any>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    });
+
+    const body={
+      id_pedido: id_pedido
+    }
+    return this.http.post(this.baseUrlPayment, body, {headers})
   }
 }
