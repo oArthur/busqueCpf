@@ -33,8 +33,7 @@
     <ng-container *ngFor="let item of dados">
 
       <div *ngIf="!resultadoCompleto && !item.adicional"
-           class="flex flex-col sm:flex-row sm:justify-between sm:items-center px-4
-         sm:px-6 py-5 border-b last:border-b-0 hover:bg-gray-50 transition-colors">
+           class="flex flex-row justify-between items-start px-4 sm:px-6 py-5 border-b last:border-b-0 hover:bg-gray-50 transition-colors">
 
         <div class="flex items-center gap-2 text-textPrimary text-sm font-medium">
           <mat-icon class="text-primary">{{ item.icon }}</mat-icon>
@@ -53,12 +52,12 @@
           </ng-container>
 
           <ng-template #semValorTpl>
-            <div class="text-center mt-2">
-              <div class="flex items-center justify-center gap-1 text-green-600 font-semibold text-sm">
+            <div class="mt-2 sm:mt-0 flex flex-col items-end text-right">
+              <div class="flex items-center gap-1 text-green-600 font-semibold text-sm">
                 <mat-icon>check_circle</mat-icon>
                 Verificado
               </div>
-              <div class="text-gray-600 text-[9px] mt-1">
+              <div class="text-gray-600 text-[9px] leading-tight">
                 Disponível no <br />
                 Relatório Completo
               </div>
