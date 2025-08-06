@@ -1,14 +1,14 @@
 <div class="bg-white shadow-lg rounded-xl p-6 max-w-3xl mx-auto">
 
   <!-- Header com ícone e título -->
-  <div class="flex items-center justify-center text-title primary font-bold text-2xl p-4">
-    <mat-icon>shield</mat-icon>
-    <span class="ml-3 font-bold">Relatório Verificado</span>
-  </div>
+<!--  <div class="flex items-center justify-center text-title primary font-bold text-2xl p-4">-->
+<!--    <mat-icon>shield</mat-icon>-->
+<!--    <span class="ml-3 font-bold">Relatório Verificado</span>-->
+<!--  </div>-->
 
-  <div class="flex items-center justify-center text-black primary font-bold text-3xl p-4">
-    <span class="font-semibold text-center">Relatório Completo de Dados Pessoais</span>
-  </div>
+<!--  <div class="flex items-center justify-center text-black primary font-bold text-3xl p-4">-->
+<!--    <span class="font-semibold text-center">Relatório Completo de Dados Pessoais</span>-->
+<!--  </div>-->
 
   <div *ngIf="!resultadoCompleto;" class="mt-6 text-center">
     <button
@@ -53,10 +53,16 @@
           </ng-container>
 
           <ng-template #semValorTpl>
-          <span (click)="scrollParaCompra()" class="inline-flex items-center mt-2 lg:mt-0 gap-2 text-green-600 font-semibold text-sm cursor-pointer">
-            <mat-icon>check_circle</mat-icon>
-            Verificado
-          </span>
+            <div class="text-center mt-2">
+              <div class="flex items-center justify-center gap-1 text-green-600 font-semibold text-sm">
+                <mat-icon>check_circle</mat-icon>
+                Verificado
+              </div>
+              <div class="text-gray-600 text-[9px] mt-1">
+                Disponível no <br />
+                Relatório Completo
+              </div>
+            </div>
           </ng-template>
         </div>
       </div>
@@ -281,18 +287,18 @@
   </ng-container>
 
   <!--   Benefícios do Completo -->
-  <div class="mt-8 bg-white rounded-lg shadow p-6">
-    <h3 class="flex items-center justify-center gap-2 text-primary font-semibold text-lg mb-4">
-      <mat-icon>diamond</mat-icon>
-      O que você ganha com o relatório completo
-    </h3>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div *ngFor="let b of beneficios" class="flex items-start gap-2">
-        <mat-icon class="text-green-600 text-sm">check</mat-icon>
-        <span class="text-textPrimary text-sm">{{ b }}</span>
-      </div>
-    </div>
-  </div>
+<!--  <div class="mt-8 bg-white rounded-lg shadow p-6">-->
+<!--    <h3 class="flex items-center justify-center gap-2 text-primary font-semibold text-lg mb-4">-->
+<!--      <mat-icon>diamond</mat-icon>-->
+<!--      O que você ganha com o relatório completo-->
+<!--    </h3>-->
+<!--    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">-->
+<!--      <div *ngFor="let b of beneficios" class="flex items-start gap-2">-->
+<!--        <mat-icon class="text-green-600 text-sm">check</mat-icon>-->
+<!--        <span class="text-textPrimary text-sm">{{ b }}</span>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
 
   <!-- CTA Secundário -->
   <div class="mt-8 text-center">

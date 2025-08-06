@@ -32,4 +32,9 @@
   </div>
 
   <app-form-contato [cpfBusca]="cpf" [showCupom]="!dialogRef" [pacote]="data.packId" (orderGenerated)="onOrderGenerated($event)"></app-form-contato>
+  <div class="max-w-lg mx-auto bg-gray-100 p-6 rounded-2xl shadow-md space-y-4 mt-2">
+    <p>O seu e-mail será utilizado com a finalidade de viabilizar o pagamento – ato necessário à formalização do serviço contratado, conforme art. 7º, V, da Lei Geral de Proteção de Dados (LGPD –  Lei nº 13.709/2018).</p>
+    <p>Enviaremos seu Relatório Completo no e-mail indicado.</p>
+    <p>O Busque CPF trata dados pessoais de acordo com a LGPD. Leia nossa <a class="text-gray-600 underline" routerLink="/politicas-de-privacidade">Políticas de Privacidade.</a></p>
+  </div>
 </div>

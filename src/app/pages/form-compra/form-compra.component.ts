@@ -6,18 +6,20 @@ import {CurrencyPipe, DecimalPipe, NgIf} from '@angular/common';
 import {CpfFormatPipe} from '../../pipes/cpf-format.pipe';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {MatIcon} from '@angular/material/icon';
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-form-compra',
   standalone: true,
-  imports: [
-    FormContatoComponent,
-    CurrencyPipe,
-    DecimalPipe,
-    NgIf,
-    CpfFormatPipe,
-    MatIcon
-  ],
+    imports: [
+        FormContatoComponent,
+        CurrencyPipe,
+        DecimalPipe,
+        NgIf,
+        CpfFormatPipe,
+        MatIcon,
+        RouterLink
+    ],
   templateUrl: './form-compra.component.html',
   styleUrl: './form-compra.component.scss'
 })

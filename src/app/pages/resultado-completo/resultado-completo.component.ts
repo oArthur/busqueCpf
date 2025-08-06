@@ -50,12 +50,12 @@ export class ResultadoCompletoComponent implements OnInit, OnDestroy {
     { icon:"business_center", name: "ocupacao", label: "Ocupação Profissional", chave: "ocupacao", show: true,adicional: false },
     { icon:"payments", name: "renda", label: "Renda", chave: "renda", show: true,adicional: false },
     { icon:"stars", name: "signos", label: "Signos", chave: "signos", show: false,adicional: false },
-    { icon:"diversity_1", name: "vinculos", label: "Vínculos", chave: "vinculos", show: true, adicional: true, preco: 10.90 },
-    { icon:"apartment", name: "participacao_societaria", label: "Participação Societária", chave: "participacao_societaria", show: true, adicional: true, preco: 12.90 },
-    { icon:"history", name: "historico_profissional", label: "Histórico Profissional", chave: "historico_profissional", show: true, adicional: true, preco: 10.90 },
-    { icon:"phone", name: "telefones", label: "Telefones", chave: "telefones", show: true, adicional: true, preco: 15.90 },
+    { icon:"diversity_1", name: "vinculos", label: "Vínculos", chave: "vinculos", show: true, adicional: true, preco: 12.90 },
+    { icon:"apartment", name: "participacao_societaria", label: "Participação Societária", chave: "participacao_societaria", show: true, adicional: true, preco: 14.90 },
+    { icon:"history", name: "historico_profissional", label: "Histórico Profissional", chave: "historico_profissional", show: true, adicional: true, preco: 12.90 },
+    { icon:"phone", name: "telefones", label: "Telefones", chave: "telefones", show: true, adicional: true, preco: 17.90 },
     { icon:"mail", name: "emails", label: "E-Mails", chave: "emails", show: false, adicional: false },
-    { icon: "home_pin", name: "enderecos", label: "Endereços", chave: "enderecos", show: true, adicional: true, preco: 12.90 }
+    { icon: "home_pin", name: "enderecos", label: "Endereços", chave: "enderecos", show: true, adicional: true, preco: 14.90 }
   ];
 
   ngOnInit() {
